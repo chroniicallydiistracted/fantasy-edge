@@ -13,7 +13,7 @@ Date: 2025-09-03
 - **Phase 7 – Projection Pipeline**: Completed. Worker persists offensive projections to the database and an API endpoint serves player projections with variance and category breakdowns.
 - **Phase 8 – Lineup Optimization**: Initial optimizer package providing a backtracking algorithm to fill roster slots based on projected points, with unit tests.
 - **Phase 9 – Waivers & Streamers**: Implemented Celery `waiver_shortlist` task and API endpoints for team waivers and DEF/IDP streamers with deterministic ranking tests.
-- **Phase 10 – Frontend (Next.js)**: In progress. Added Yahoo login page and leagues table using TanStack Table; dependencies for Recharts and TanStack Table installed. Implemented matchups page and Node-based smoke tests (`npm test`).
+- **Phase 10 – Frontend (Next.js)**: In progress. Added Yahoo login page and leagues table using TanStack Table; dependencies for Recharts and TanStack Table installed. Implemented matchups and streamers pages alongside Node-based smoke tests (`npm test`).
 - **Phases 11–13**: Not started. Scheduling, security hardening, and deployment docs remain outstanding.
 - **Timezone Handling**: Replaced all uses of `datetime.utcnow()` with `datetime.now(datetime.UTC)` across API modules and tests.
 
@@ -21,7 +21,7 @@ Date: 2025-09-03
 Phases 0–9 have passing tests and are suitable for production usage. Phase 10 frontend work has begun but is incomplete; later phases remain undeveloped.
 
 ## Next Steps
-Continue Phase 10 frontend expansion—matchup, waivers, streamers, and settings pages—then proceed through remaining phases as outlined in `docs/FOLLOWUP.md`.
+Continue Phase 10 frontend expansion—add waivers and settings pages—then proceed through remaining phases as outlined in `docs/FOLLOWUP.md`.
 
 ---
 

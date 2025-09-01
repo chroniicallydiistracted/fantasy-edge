@@ -27,7 +27,7 @@ export default async function MatchupPage({
         Week {params.week} Matchups
       </h1>
       <ul>
-        {matchups.map((m, idx) => (
+        {matchups.map((m: { teams: string[] }, idx: number) => (
           <li key={idx}>{m.teams.join(" vs ")}</li>
         ))}
       </ul>
