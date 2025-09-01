@@ -122,14 +122,29 @@
 
 ---
 
+## Phase 2 — Yahoo OAuth 3-Legged Flow
+
+### Status: ✅ COMPLETED
+
+### Changes Made
+- Implemented full Yahoo OAuth login and callback endpoints with state verification and cookie-based sessions.
+- Added `YahooOAuthClient` handling token exchange, refresh with jittered retries, and userinfo retrieval.
+- Persisted encrypted access and refresh tokens tied to users; created new migration allowing nullable emails.
+- Wired database session dependency and introduced unit tests for OAuth flow and token refresh.
+
+### Outstanding Issues
+- None
+
+---
+
 ## Overall Status
 
 ### Completed Tasks
 - Phase 0: ✅ Infra & CI Skeleton
 - Phase 1: ✅ Auth Foundations
+- Phase 2: ✅ Yahoo OAuth
 
 ### Upcoming Phases
-- Phase 2: OAuth Integration (Yahoo)
 - Phase 3: User Management
 - Phase 4: Fantasy Data Integration
 - Phase 5: Optimization Engine
