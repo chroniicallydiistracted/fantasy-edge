@@ -15,7 +15,15 @@ from celery_app import celery  # type: ignore
 
 # Make app models importable when running from this directory
 sys.path.append(str(Path(__file__).resolve().parents[2] / "apps/api"))
-from app.models import Injury, PlayerLink, Weather  # type: ignore  # noqa: E402
+sys.path.append(str(Path(__file__).resolve().parents[2] / "packages"))
+from app.models import (  # type: ignore  # noqa: E402
+    Injury,
+    Player,
+    PlayerLink,
+    Projection,
+    Weather,
+)
+from projections import project_offense  # type: ignore  # noqa: E402
 
 
 DATABASE_URL = os.getenv("DATABASE_URL")
@@ -139,6 +147,41 @@ def update_weather(game_id: str, lat: float, lon: float) -> float:
     finally:
         session.close()
     return waf
+
+
+def generate_projections(session, week: int) -> int:
+    players = session.query(Player).all()
+    count = 0
+    for player in players:
+        baselines = {b.metric: b.value for b in player.baselines}
+        proe = baselines.get("proe", 0)
+        weather = (
+            session.query(Weather).filter_by(game_id=f"{week}-{player.id}").first()
+        )
+        waf = weather.waf if weather else 1.0
+        categories, points = project_offense(baselines, proe, waf)
+        session.merge(
+            Projection(
+                player_id=player.id,
+                week=week,
+                projected_points=points,
+                data=categories,
+            )
+        )
+        count += 1
+    session.commit()
+    return count
+
+
+@celery.task
+def project_week(week: int) -> int:
+    if SessionLocal is None:
+        return 0
+    session = SessionLocal()
+    try:
+        return generate_projections(session, week)
+    finally:
+        session.close()
 
 
 # Create a simple FastAPI app for health checks
