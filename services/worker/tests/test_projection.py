@@ -34,4 +34,5 @@ def test_generate_projections_inserts_rows():
     assert count == 1
     proj = session.query(Projection).filter_by(player_id=1, week=1).one()
     assert proj.projected_points > 0
+    assert proj.variance and proj.variance > 0
     assert proj.data["PassYds"] > 0

@@ -24,6 +24,7 @@ from app.models import (  # type: ignore  # noqa: E402
     Weather,
 )
 from projections import project_offense  # type: ignore  # noqa: E402
+from sqlalchemy.exc import SQLAlchemyError
 
 
 DATABASE_URL = os.getenv("DATABASE_URL")
@@ -144,6 +145,8 @@ def update_weather(game_id: str, lat: float, lon: float) -> float:
     try:
         session.merge(Weather(game_id=game_id, waf=waf))
         session.commit()
+    except SQLAlchemyError:
+        session.rollback()
     finally:
         session.close()
     return waf
@@ -159,12 +162,13 @@ def generate_projections(session, week: int) -> int:
             session.query(Weather).filter_by(game_id=f"{week}-{player.id}").first()
         )
         waf = weather.waf if weather else 1.0
-        categories, points = project_offense(baselines, proe, waf)
+        categories, points, variance = project_offense(baselines, proe, waf)
         session.merge(
             Projection(
                 player_id=player.id,
                 week=week,
                 projected_points=points,
+                variance=variance,
                 data=categories,
             )
         )

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+"""Simple projection estimators."""
+
 from dataclasses import asdict
 from typing import Dict, Tuple
 
@@ -8,8 +10,13 @@ from scoring import OffenseStatline, offense_points
 
 def project_offense(
     baselines: Dict[str, float], proe: float, waf: float
-) -> Tuple[Dict[str, float], float]:
-    """Simple offense projection using baseline rates, PROE, and weather."""
+) -> Tuple[Dict[str, float], float, float]:
+    """Project an offensive statline.
+
+    Returns a tuple of (category breakdown, projected points, variance).
+    The variance is a naive estimate set to 10% of the projected points to
+    provide downstream consumers with a measure of uncertainty.
+    """
     pass_att = baselines.get("pass_attempts", 0) * (1 + proe) * waf
     comp_rate = baselines.get("comp_rate", 0.65)
     completions = pass_att * comp_rate
@@ -40,4 +47,5 @@ def project_offense(
         RecTD=rec_td,
     )
     points = offense_points(stat)
-    return asdict(stat), points
+    variance = points * 0.1
+    return asdict(stat), points, variance
