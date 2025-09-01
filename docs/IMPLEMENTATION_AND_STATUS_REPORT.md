@@ -156,6 +156,21 @@
 
 ---
 
+## Phase 4 — Database Schema Expansion & Seeding
+
+### Status: ✅ COMPLETED
+
+### Changes Made
+- Added SQLAlchemy models and Alembic migration for `league`, `team`, `player`, `roster_slot`, `injury`, `weather`, `baseline`, `projection`, `recommendation`, and `player_link` tables.
+- Implemented `seed_league` helper to insert league `528886` when missing.
+- Enabled SQLite foreign key enforcement in tests.
+- Created tests ensuring migrations run, foreign keys and unique constraints are enforced, and seeding is idempotent.
+
+### Outstanding Issues
+- None
+
+---
+
 ## Overall Status
 
 ### Completed Tasks
@@ -163,10 +178,11 @@
 - Phase 1: ✅ Auth Foundations
 - Phase 2: ✅ Yahoo OAuth
 - Phase 3: ✅ Yahoo League Read Endpoints
+- Phase 4: ✅ Database Schema Expansion & Seeding
 
 ### Upcoming Phases
-- Phase 4: Fantasy Data Integration
-- Phase 5: Optimization Engine
+- Phase 5: Free Data Integrations
+- Phase 6: Optimization Engine
 
 ### General Notes
 - All implementations follow security best practices
