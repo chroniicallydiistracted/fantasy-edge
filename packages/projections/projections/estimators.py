@@ -1,6 +1,6 @@
-from __future__ import annotations
-
 """Simple projection estimators."""
+
+from __future__ import annotations
 
 from dataclasses import asdict
 from typing import Dict, Tuple
