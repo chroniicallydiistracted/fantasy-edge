@@ -22,8 +22,6 @@ from app.models import (  # type: ignore  # noqa: E402
     Player,
     PlayerLink,
     Projection,
-    RosterSlot,
-    Team,
     Weather,
 )
 from app.waivers import compute_waiver_shortlist  # type: ignore  # noqa: E402
