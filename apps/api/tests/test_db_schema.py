@@ -1,5 +1,5 @@
-import pytest
-from alembic import command
+from pathlib import Path
+
 import pytest
 from alembic import command
 from alembic.config import Config
@@ -11,8 +11,10 @@ from app.seed import seed_league
 
 
 def test_migrations_upgrade(tmp_path):
-    cfg = Config("alembic.ini")
+    root = Path(__file__).resolve().parents[1]
+    cfg = Config(str(root / "alembic.ini"))
     cfg.set_main_option("sqlalchemy.url", "sqlite://")
+    cfg.set_main_option("script_location", str(root / "alembic"))
     cfg.attributes["configure_args"] = {"render_as_batch": True}
     command.upgrade(cfg, "head", sql=True)
 
