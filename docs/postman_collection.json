@@ -1,0 +1,22 @@
+{
+  "info": {
+    "name": "Fantasy Edge API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Health",
+      "request": {
+        "method": "GET",
+        "url": "{{api_base}}/health"
+      },
+      "response": []
+    }
+  ],
+  "variable": [
+    {
+      "key": "api_base",
+      "value": "http://localhost:8000"
+    }
+  ]
+}

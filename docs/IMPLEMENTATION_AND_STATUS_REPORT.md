@@ -16,14 +16,14 @@ Date: 2025-09-03
 - **Phase 10 – Frontend (Next.js)**: In progress. Added Yahoo login page, leagues table, matchups, waivers, streamers, and settings pages with client-side CSV import; Node-based tests cover arithmetic, waiver mapping, and CSV parsing.
 - **Phase 11 – Scheduling**: Added Celery beat schedules for nightly projection sync, Tuesday waiver shortlist, and a configurable game-day refresh interval with unit tests.
 - **Phase 12 – Security & Resilience**: Completed. Central logging masks secrets and emails, Yahoo client uses exponential backoff with jitter and snapshot support, CORS and cookie settings secured with tests.
-- **Phase 13 – Docs & Deploy Config**: Not started. Deployment documentation and configuration templates remain outstanding.
+- **Phase 13 – Docs & Deploy Config**: Completed. Added root `README.md`, Postman collection, Fly.io/Vercel templates, and CI smoke test hitting `/health`.
 - **Timezone Handling**: Replaced all uses of `datetime.utcnow()` with `datetime.now(datetime.UTC)` across API modules and tests.
 
 ## Production Readiness
-Phases 0–9 have passing tests and are suitable for production usage. Phase 10 frontend work has begun but is incomplete; Phase 11 scheduling is in place, while later phases remain undeveloped.
+Phases 0–9 have passing tests and are suitable for production usage. Phase 10 frontend work has begun but is incomplete; Phase 11 scheduling and Phase 12 security are in place, and Phase 13 documentation is now available.
 
 ## Next Steps
-Proceed to Phase 13 as outlined in `docs/FOLLOWUP.md`.
+Proceed to Spec2 for UI improvements and feature polish.
 
 ---
 

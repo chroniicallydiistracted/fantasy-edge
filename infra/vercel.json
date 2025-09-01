@@ -1,5 +1,5 @@
 {
   "rewrites": [
-    { "source": "/api/:path*", "destination": "https://api.edge.westfam.media/:path*" }
+    { "source": "/api/:path*", "destination": "https://api.misfits.westfam.media/:path*" }
   ]
 }

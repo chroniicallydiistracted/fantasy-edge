@@ -1,4 +1,14 @@
-# Optional Fly.io worker config (not used in dev). Fill in app name later.
+# Fly.io config for the Celery worker service.
+# Fill in the "app" name before deploying.
 app = "REPLACE_ME_worker"
-kill_signal = "SIGINT"
-kill_timeout = 5
+primary_region = "iad"
+
+[build]
+  dockerfile = "../services/worker/Dockerfile"
+
+[env]
+  PORT = "8001"
+
+[http_service]
+  internal_port = 8001
+  force_https = true
