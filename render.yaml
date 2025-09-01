@@ -4,7 +4,7 @@ services:
     name: fantasy-edge-api
     rootDir: apps/api
     env: python
-    region: ohio         # US-East; choose "oregon" or "frankfurt" if closer to you
+    region: oregon         # US-East; choose "oregon" or "frankfurt" if closer to you
     buildCommand: pip install -r requirements.txt
     startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
     autoDeploy: true

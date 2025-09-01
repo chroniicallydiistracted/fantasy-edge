@@ -63,6 +63,5 @@ dump.rdb
 .fly/
 
 # NOTE: Do NOT ignore lockfiles — commit these when present:
-#   package-lock.json, yarn.lock, pnpm-lock.yaml, requirements*.txt, poetry.lock
-.env
-.env
+#   , yarn.lock, pnpm-lock.yaml, requirements*.txt, poetry.lock
+
