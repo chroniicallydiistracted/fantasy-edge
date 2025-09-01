@@ -9,7 +9,7 @@ app = FastAPI(title="Fantasy Edge API")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "https://edge.westfam.media"],
+    allow_origins=["http://localhost:3000", "https://misfits.westfam.media"],
     allow_credentials=True, allow_methods=["*"], allow_headers=["*"],
 )
 
