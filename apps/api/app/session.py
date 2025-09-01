@@ -7,7 +7,7 @@ from .settings import settings
 class SessionManager:
     """Manages user sessions with JWT tokens stored in cookies"""
 
-    COOKIE_NAME = "fe_session"
+    COOKIE_NAME = "edge_session"
 
     @staticmethod
     def create_token(user_id: int) -> str:
@@ -15,7 +15,7 @@ class SessionManager:
         data = {"sub": str(user_id)}
         expires = datetime.utcnow() + timedelta(days=7)  # 7-day expiry
         data.update({"exp": expires})
-        return jwt.encode(data, settings.session_secret, algorithm="HS256")
+        return jwt.encode(data, settings.jwt_secret, algorithm="HS256")
 
     @staticmethod
     def set_session_cookie(response: Response, user_id: int) -> None:
@@ -39,7 +39,7 @@ class SessionManager:
     def verify_token(token: str) -> Optional[int]:
         """Verify a JWT token and return the user ID"""
         try:
-            payload = jwt.decode(token, settings.session_secret, algorithms=["HS256"])
+            payload = jwt.decode(token, settings.jwt_secret, algorithms=["HS256"])
             user_id = int(payload.get("sub"))
             return user_id
         except (JWTError, ValueError):

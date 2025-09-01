@@ -75,7 +75,7 @@ def test_debug_bypass_enabled():
 
     # Verify the cookie was set
     assert "set-cookie" in response.headers
-    assert settings.session_secret in response.headers["set-cookie"]
+    assert SessionManager.COOKIE_NAME in response.headers["set-cookie"]
 
     # Restore original value
     settings.allow_debug_user = original_value

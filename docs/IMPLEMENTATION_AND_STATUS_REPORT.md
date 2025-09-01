@@ -8,10 +8,13 @@
 - Standardized `apps/api/.env.example` placeholders to use `REPLACE_ME` and aligned variable names with the build plan.
 - Introduced a reusable `apiFetch` helper in `apps/web/lib/api.ts` and updated the leagues page to use it.
 - Added an ESLint configuration and `lint` script for the web app to support CI.
+- Updated the `apiFetch` helper to include credentials for cookie-based auth.
+- Fixed debug session handling in the API and standardized the session cookie name to `edge_session`.
 
 ### Successes
 - `pnpm lint` and `pnpm build` run cleanly for the web application.
 - Repository no longer contains extraneous platform metadata files.
+- Session cookie and debug bypass tests now pass locally.
 
 ### Outstanding Tasks
 - Flesh out additional web pages and components.
