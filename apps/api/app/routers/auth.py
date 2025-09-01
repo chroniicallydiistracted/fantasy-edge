@@ -1,6 +1,6 @@
 import base64
 import os
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, UTC
 from typing import Dict
 
 from fastapi import APIRouter, Depends, HTTPException, Response
@@ -24,7 +24,7 @@ state_store: Dict[str, datetime] = {}
 @router.get("/yahoo/login")
 def yahoo_login():
     state = base64.urlsafe_b64encode(os.urandom(16)).decode()
-    state_store[state] = datetime.utcnow()
+    state_store[state] = datetime.now(UTC)
     params = (
         f"client_id={settings.yahoo_client_id}&response_type=code&"
         f"redirect_uri={settings.yahoo_redirect_uri}&scope={SCOPE}&state={state}"
@@ -68,7 +68,7 @@ def yahoo_callback(
 
     enc_access = encryption.encrypt(access_token)
     enc_refresh = encryption.encrypt(refresh_token) if refresh_token else None
-    expires_at = datetime.utcnow() + timedelta(seconds=expires_in)
+    expires_at = datetime.now(UTC) + timedelta(seconds=expires_in)
 
     oauth = db.query(OAuthToken).filter_by(user_id=user.id, provider="yahoo").first()
     if oauth:

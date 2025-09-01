@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, UTC
 from typing import Optional
 from jose import JWTError, jwt
 from fastapi import Response
@@ -13,7 +13,7 @@ class SessionManager:
     def create_token(user_id: int) -> str:
         """Create a JWT token for the user"""
         data = {"sub": str(user_id)}
-        expires = datetime.utcnow() + timedelta(days=7)  # 7-day expiry
+        expires = datetime.now(UTC) + timedelta(days=7)  # 7-day expiry
         data.update({"exp": expires})
         return jwt.encode(data, settings.jwt_secret, algorithm="HS256")
 
