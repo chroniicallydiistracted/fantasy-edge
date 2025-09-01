@@ -8,6 +8,7 @@ from sqlalchemy import (
     func,
     Boolean,
     Float,
+    JSON,
 )
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
@@ -129,6 +130,8 @@ class Projection(Base):
     player_id = Column(Integer, ForeignKey("players.id"), nullable=False)
     week = Column(Integer, nullable=False)
     projected_points = Column(Float, nullable=False)
+    data = Column(JSON, nullable=False)
+    variance = Column(Float, nullable=True)
 
     player = relationship("Player", back_populates="projections")
 
