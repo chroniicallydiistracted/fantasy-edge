@@ -14,14 +14,15 @@ Date: 2025-09-03
 - **Phase 8 – Lineup Optimization**: Initial optimizer package providing a backtracking algorithm to fill roster slots based on projected points, with unit tests.
 - **Phase 9 – Waivers & Streamers**: Implemented Celery `waiver_shortlist` task and API endpoints for team waivers and DEF/IDP streamers with deterministic ranking tests.
 - **Phase 10 – Frontend (Next.js)**: In progress. Added Yahoo login page, leagues table, matchups, waivers, streamers, and settings pages with client-side CSV import; Node-based tests cover arithmetic, waiver mapping, and CSV parsing.
-- **Phases 11–13**: Not started. Scheduling, security hardening, and deployment docs remain outstanding.
+- **Phase 11 – Scheduling**: Added Celery beat schedules for nightly projection sync, Tuesday waiver shortlist, and a configurable game-day refresh interval with unit tests.
+- **Phases 12–13**: Not started. Security hardening and deployment docs remain outstanding.
 - **Timezone Handling**: Replaced all uses of `datetime.utcnow()` with `datetime.now(datetime.UTC)` across API modules and tests.
 
 ## Production Readiness
-Phases 0–9 have passing tests and are suitable for production usage. Phase 10 frontend work has begun but is incomplete; later phases remain undeveloped.
+Phases 0–9 have passing tests and are suitable for production usage. Phase 10 frontend work has begun but is incomplete; Phase 11 scheduling is in place, while later phases remain undeveloped.
 
 ## Next Steps
-Proceed to Phases 11–13 as outlined in `docs/FOLLOWUP.md`.
+Proceed to Phases 12–13 as outlined in `docs/FOLLOWUP.md`.
 
 ---
 
