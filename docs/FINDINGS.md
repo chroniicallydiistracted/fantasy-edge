@@ -25,12 +25,10 @@ The repository is a monorepo containing:
 - **Phase 8 – Lineup Optimization** and subsequent phases (Waivers, Streamers, Frontend Pages, Scheduling, Security, Docs & Deploy Config) show no implementation.
 
 ## Observations & Formatting Notes
-- Multiple modules use `datetime.utcnow()`, generating deprecation warnings.
 - The web app lacks a `test` script; `npm test` fails.
 - Documentation is minimal; README only covers basic dev commands.
 
 ## Plan / Attack
-- Replace deprecated `datetime.utcnow()` with timezone-aware calls.
 - Implement remaining phases, starting with integrating the projection pipeline.
 - Expand web UI, tests, and documentation.
 - Add `npm test` script or clarify testing approach for the web app.

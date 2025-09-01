@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, UTC
 
 import respx
 
@@ -17,7 +17,7 @@ def _setup_user(db_session):
         provider="yahoo",
         access_token=enc.encrypt("old"),
         refresh_token=enc.encrypt("refresh"),
-        expires_at=datetime.utcnow() + timedelta(hours=1),
+        expires_at=datetime.now(UTC) + timedelta(hours=1),
     )
     db_session.add(token)
     db_session.commit()
@@ -99,7 +99,7 @@ def test_league_teams_rosters_matchups(client, db_session):
 
 def test_refresh_path(client, db_session):
     user, token, enc = _setup_user(db_session)
-    token.expires_at = datetime.utcnow() + timedelta(minutes=4)
+    token.expires_at = datetime.now(UTC) + timedelta(minutes=4)
     db_session.add(token)
     db_session.commit()
     _auth_client(client, user)

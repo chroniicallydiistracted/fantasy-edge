@@ -12,6 +12,7 @@ Date: 2025-09-01
 - **Phase 6 – Scoring Engine**: Completed. Offense, kicker, defense, and IDP scoring utilities with golden tests.
 - **Phase 7 – Projection Pipeline**: Partially implemented. Basic offensive estimator and worker hooks exist with tests, but projections are not yet exposed via API or stored.
 - **Phases 8–13**: Not started. Lineup optimization, waivers/streamers, frontend pages, scheduling, security hardening, and deployment docs remain outstanding.
+- **Timezone Handling**: Replaced all uses of `datetime.utcnow()` with `datetime.now(datetime.UTC)` across API modules and tests.
 
 ## Production Readiness
 Phases 0–6 have passing tests and are suitable for production usage. Phase 7 requires integration work, and later phases remain undeveloped.

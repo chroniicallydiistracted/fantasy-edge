@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, UTC
 
 import respx
 
@@ -57,7 +57,7 @@ def test_refresh_token_if_expiring(db_session):
         provider="yahoo",
         access_token=enc.encrypt("old"),
         refresh_token=enc.encrypt("refresh"),
-        expires_at=datetime.utcnow() + timedelta(minutes=4),
+        expires_at=datetime.now(UTC) + timedelta(minutes=4),
     )
     db_session.add(token)
     db_session.commit()
