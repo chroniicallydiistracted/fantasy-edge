@@ -171,6 +171,20 @@
 
 ---
 
+## Phase 6 — Scoring Engine
+
+### Status: ✅ COMPLETED
+
+### Changes Made
+- Added pure scoring utilities for offense, kickers, defense/special teams, and individual defensive players.
+- Covered yardage bonuses, big-play extras, return yards, and turnover penalties.
+- Introduced golden tests with multiple statlines for each position to validate calculations.
+
+### Outstanding Issues
+- None
+
+---
+
 ## Overall Status
 
 ### Completed Tasks
@@ -179,10 +193,11 @@
 - Phase 2: ✅ Yahoo OAuth
 - Phase 3: ✅ Yahoo League Read Endpoints
 - Phase 4: ✅ Database Schema Expansion & Seeding
+- Phase 6: ✅ Scoring Engine
 
 ### Upcoming Phases
 - Phase 5: Free Data Integrations
-- Phase 6: Optimization Engine
+- Phase 7: Projection Pipeline
 
 ### General Notes
 - All implementations follow security best practices
