@@ -10,15 +10,15 @@ Date: 2025-09-01
 - **Phase 4 – Database Schema & Seeding**: Completed. Comprehensive models and migrations plus idempotent seeding for league 528886.
 - **Phase 5 – Free Data Integrations**: Completed. Celery tasks ingest nflverse data, injuries, and weather; WAF calculations and caching implemented.
 - **Phase 6 – Scoring Engine**: Completed. Offense, kicker, defense, and IDP scoring utilities with golden tests.
-- **Phase 7 – Projection Pipeline**: Partially implemented. Basic offensive estimator and worker hooks exist with tests, but projections are not yet exposed via API or stored.
+- **Phase 7 – Projection Pipeline**: Completed. Worker persists offensive projections to the database and an API endpoint serves player projections with variance and category breakdowns.
 - **Phases 8–13**: Not started. Lineup optimization, waivers/streamers, frontend pages, scheduling, security hardening, and deployment docs remain outstanding.
 - **Timezone Handling**: Replaced all uses of `datetime.utcnow()` with `datetime.now(datetime.UTC)` across API modules and tests.
 
 ## Production Readiness
-Phases 0–6 have passing tests and are suitable for production usage. Phase 7 requires integration work, and later phases remain undeveloped.
+Phases 0–7 have passing tests and are suitable for production usage. Later phases remain undeveloped.
 
 ## Next Steps
-Focus on integrating the projection pipeline (Phase 7) and proceeding through remaining phases as outlined in `docs/FOLLOWUP.md`.
+Focus on Phase 8 lineup optimization and proceed through remaining phases as outlined in `docs/FOLLOWUP.md`.
 
 ---
 

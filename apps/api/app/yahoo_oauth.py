@@ -64,14 +64,20 @@ class YahooOAuthClient:
 
     def ensure_valid_token(self, db: Session, token: OAuthToken) -> str:
         """Return decrypted access token, refreshing if expiring soon."""
-        if token.expires_at and token.expires_at - datetime.now(UTC) < timedelta(minutes=5):
-            data = self.refresh_token(self.encryption.decrypt(token.refresh_token))
-            token.access_token = self.encryption.encrypt(data["access_token"])
-            if data.get("refresh_token"):
-                token.refresh_token = self.encryption.encrypt(data["refresh_token"])
-            token.expires_at = datetime.now(UTC) + timedelta(seconds=data.get("expires_in", 0))
-            token.scope = data.get("scope")
-            db.add(token)
-            db.commit()
-            db.refresh(token)
+        if token.expires_at:
+            expires = token.expires_at
+            if expires.tzinfo is None:
+                expires = expires.replace(tzinfo=UTC)
+            if expires - datetime.now(UTC) < timedelta(minutes=5):
+                data = self.refresh_token(self.encryption.decrypt(token.refresh_token))
+                token.access_token = self.encryption.encrypt(data["access_token"])
+                if data.get("refresh_token"):
+                    token.refresh_token = self.encryption.encrypt(data["refresh_token"])
+                token.expires_at = datetime.now(UTC) + timedelta(
+                    seconds=int(data.get("expires_in", 0))
+                )
+                token.scope = data.get("scope")
+                db.add(token)
+                db.commit()
+                db.refresh(token)
         return self.encryption.decrypt(token.access_token)
