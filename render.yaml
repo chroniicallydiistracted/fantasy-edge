@@ -1,0 +1,26 @@
+# render.yaml (root of repo)
+services:
+  - type: web
+    name: fantasy-edge-api
+    rootDir: apps/api
+    env: python
+    region: ohio         # US-East; choose "oregon" or "frankfurt" if closer to you
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    autoDeploy: true
+    healthCheckPath: /health
+    envVars:
+      - key: DATABASE_URL            # Neon Postgres (serverless)
+        value: REPLACE_ME
+      - key: REDIS_URL               # Upstash (TLS URL rediss://...)
+        value: REPLACE_ME
+      - key: JWT_SECRET
+        generateValue: true
+      - key: NWS_USER_AGENT
+        value: Fantasy Edge (contact: you@example.com)
+      - key: YAHOO_CLIENT_ID
+        value: REPLACE_ME
+      - key: YAHOO_CLIENT_SECRET
+        value: REPLACE_ME
+      - key: YAHOO_REDIRECT_URI
+        value: https://fantasy-edge-api.onrender.com/auth/yahoo/callback
