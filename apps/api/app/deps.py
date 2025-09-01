@@ -1,8 +1,7 @@
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends, HTTPException, Header, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.orm import Session
 from jose import JWTError, jwt
-from datetime import datetime, timedelta
 from typing import Optional
 from .models import User
 from .security import TokenEncryptionService
@@ -33,8 +32,8 @@ def get_current_user(
     try:
         # Decode the JWT token
         payload = jwt.decode(
-            credentials.credentials, 
-            settings.session_secret, 
+            credentials.credentials,
+            settings.jwt_secret,
             algorithms=["HS256"]
         )
         user_id: int = payload.get("sub")
@@ -61,21 +60,16 @@ def get_current_user_optional(
         return None
 
 def get_debug_user(
-    authorization: str = None,
+    debug_user: Optional[str] = Header(None, alias="X-Debug-User"),
     db: Session = Depends(get_db)
 ) -> Optional[User]:
     """Get user via debug header if enabled"""
-    if not settings.allow_debug_user:
+    if not settings.allow_debug_user or not debug_user:
         return None
-    
-    # Extract debug header
-    if authorization and authorization.startswith("X-Debug-User: "):
-        try:
-            user_id = int(authorization.split("X-Debug-User: ")[1])
-            # In a real implementation, we would fetch the user from the database
-            # For now, we'll return a placeholder
-            return User(id=user_id, email=f"user{user_id}@example.com")
-        except (ValueError, IndexError):
-            pass
-    
-    return None
+
+    try:
+        user_id = int(debug_user)
+        # Placeholder user lookup
+        return User(id=user_id, email=f"user{user_id}@example.com")
+    except ValueError:
+        return None

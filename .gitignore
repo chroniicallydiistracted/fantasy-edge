@@ -45,6 +45,7 @@ celerybeat.pid
 Thumbs.db
 .vscode/
 .idea/
+*:Zone.Identifier
 
 # --- Data / caches (local only) ---
 # If you later want to track sample data, create a docs/samples/ folder and commit there.
