@@ -171,6 +171,21 @@
 
 ---
 
+## Phase 5 — Free Data Integrations
+
+### Status: ✅ COMPLETED
+
+### Changes Made
+- Implemented Celery tasks to download nflverse datasets with ETag-based caching under a shared `/data` volume.
+- Normalized `nflreadr` injury reports into the database.
+- Pulled `api.weather.gov` forecasts using a configurable user agent and stored computed Weather Adjustment Factors.
+- Added unit tests for caching, injury ingestion, and WAF calculation.
+
+### Outstanding Issues
+- None
+
+---
+
 ## Phase 6 — Scoring Engine
 
 ### Status: ✅ COMPLETED
@@ -193,10 +208,10 @@
 - Phase 2: ✅ Yahoo OAuth
 - Phase 3: ✅ Yahoo League Read Endpoints
 - Phase 4: ✅ Database Schema Expansion & Seeding
+- Phase 5: ✅ Free Data Integrations
 - Phase 6: ✅ Scoring Engine
 
 ### Upcoming Phases
-- Phase 5: Free Data Integrations
 - Phase 7: Projection Pipeline
 
 ### General Notes
