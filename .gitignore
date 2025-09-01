@@ -1,0 +1,66 @@
+# --- Node / Next.js (apps/web) ---
+node_modules/
+apps/web/node_modules/
+apps/web/.next/
+apps/web/out/
+apps/web/.turbo/
+apps/web/.cache/
+.vercel/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# --- Python (FastAPI + worker) ---
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+.eggs/
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.tox/
+.coverage
+htmlcov/
+.ipynb_checkpoints/
+
+# Celery artifacts
+celerybeat-schedule
+celerybeat.pid
+
+# --- Environment files ---
+.env
+.env.*
+!.env.example
+
+# --- OS / Editor junk ---
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# --- Data / caches (local only) ---
+# If you later want to track sample data, create a docs/samples/ folder and commit there.
+data/
+
+# --- DB / cache dumps ---
+dump.rdb
+*.sqlite3
+*.sql
+
+# --- Docker / runtime ---
+*.pid
+*.seed
+
+# --- Fly.io ---
+.fly/
+
+# NOTE: Do NOT ignore lockfiles — commit these when present:
+#   package-lock.json, yarn.lock, pnpm-lock.yaml, requirements*.txt, poetry.lock
