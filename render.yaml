@@ -16,8 +16,10 @@ services:
         value: REPLACE_ME
       - key: JWT_SECRET
         generateValue: true
+      - key: TOKEN_CRYPTO_KEY        # base64-encoded 32-byte key for Fernet
+        value: REPLACE_ME
       - key: NWS_USER_AGENT
-        value: Fantasy Edge (contact: you@example.com)
+        value: "Fantasy Edge (contact: you@example.com)"
       - key: YAHOO_CLIENT_ID
         value: REPLACE_ME
       - key: YAHOO_CLIENT_SECRET

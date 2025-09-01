@@ -51,9 +51,8 @@ npm test
 
 ## Deployment Templates
 
-Fly.io and Vercel configuration files live under `infra/`:
-- `infra/fly.api.toml`
-- `infra/fly.worker.toml`
+Deployment configuration files:
+- `render.yaml`
 - `infra/vercel.json`
 
-Populate app names and secrets before deploying.
+Populate service names and secrets before deploying.
