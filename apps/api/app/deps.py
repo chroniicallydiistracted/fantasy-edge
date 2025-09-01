@@ -1,4 +1,4 @@
-from fastapi import Depends, HTTPException, Header, status
+from fastapi import Cookie, Depends, HTTPException, Header, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session, sessionmaker
@@ -7,6 +7,9 @@ from typing import Optional
 from .models import User
 from .security import TokenEncryptionService
 from .settings import settings
+from .session import SessionManager
+from .yahoo_oauth import YahooOAuthClient
+from .yahoo_client import YahooFantasyClient
 
 # Security
 security = HTTPBearer()
@@ -78,3 +81,26 @@ def get_debug_user(
         return User(id=user_id, email=f"user{user_id}@example.com")
     except ValueError:
         return None
+
+
+def get_current_user_session(
+    session_token: Optional[str] = Cookie(None, alias=SessionManager.COOKIE_NAME),
+    db: Session = Depends(get_db),
+) -> User:
+    """Resolve user from session cookie"""
+    if not session_token:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Not authenticated")
+    user_id = SessionManager.verify_token(session_token)
+    if not user_id:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Not authenticated")
+    user = db.query(User).filter_by(id=user_id).first()
+    if not user:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Not authenticated")
+    return user
+
+
+def get_yahoo_client(
+    encryption: TokenEncryptionService = Depends(get_token_encryption_service),
+) -> YahooFantasyClient:
+    oauth = YahooOAuthClient(encryption)
+    return YahooFantasyClient(oauth)

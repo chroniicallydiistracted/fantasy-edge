@@ -1,6 +1,6 @@
 from cryptography.fernet import Fernet
-import os
 import base64
+
 
 class TokenEncryptionService:
     """Service for encrypting and decrypting OAuth tokens at rest"""

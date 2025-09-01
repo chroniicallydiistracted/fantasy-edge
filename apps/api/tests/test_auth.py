@@ -1,9 +1,8 @@
-import pytest
 from fastapi.testclient import TestClient
 from app.security import TokenEncryptionService
 from app.session import SessionManager
-from app.models import User
 from app.settings import settings
+
 
 # Test the token encryption service
 def test_token_encryption_roundtrip():
@@ -21,6 +20,7 @@ def test_token_encryption_roundtrip():
     decrypted = encryption_service.decrypt(encrypted)
     assert decrypted == test_token
 
+
 # Test session management
 def test_session_token_creation():
     # Create a test user ID
@@ -34,11 +34,13 @@ def test_session_token_creation():
     verified_user_id = SessionManager.verify_token(token)
     assert verified_user_id == user_id
 
+
 def test_session_token_invalid():
     # Test with an invalid token
     invalid_token = "invalid.token.here"
     verified_user_id = SessionManager.verify_token(invalid_token)
     assert verified_user_id is None
+
 
 # Test debug bypass functionality
 def test_debug_bypass_disabled():
@@ -48,6 +50,7 @@ def test_debug_bypass_disabled():
 
     # Create a test client
     from app.main import app
+
     client = TestClient(app)
 
     # Try to access debug endpoint
@@ -58,6 +61,7 @@ def test_debug_bypass_disabled():
     # Restore original value
     settings.allow_debug_user = original_value
 
+
 def test_debug_bypass_enabled():
     # Temporarily enable debug user
     original_value = settings.allow_debug_user
@@ -65,6 +69,7 @@ def test_debug_bypass_enabled():
 
     # Create a test client
     from app.main import app
+
     client = TestClient(app)
 
     # Try to access debug endpoint
@@ -80,6 +85,7 @@ def test_debug_bypass_enabled():
     # Restore original value
     settings.allow_debug_user = original_value
 
+
 def test_debug_bypass_invalid_header():
     # Temporarily enable debug user
     original_value = settings.allow_debug_user
@@ -87,6 +93,7 @@ def test_debug_bypass_invalid_header():
 
     # Create a test client
     from app.main import app
+
     client = TestClient(app)
 
     # Try to access debug endpoint with invalid header
