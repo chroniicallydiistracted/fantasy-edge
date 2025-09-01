@@ -23,12 +23,18 @@ services:
     env_file: ../.env
     environment:
       REDIS_URL: redis://redis:6379/0
+      DATABASE_URL: postgresql+psycopg://ff:ff@db:5432/ff
     ports: ["8001:8001"]
     depends_on: [redis]
     command: python tasks.py
+    volumes:
+      - data:/data
   web:
     build: ../apps/web
     environment:
       NEXT_PUBLIC_API_BASE: http://localhost:8000
     ports: ["3000:3000"]
     command: npm run dev
+
+volumes:
+  data:

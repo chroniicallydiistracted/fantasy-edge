@@ -1,4 +1,4 @@
-from celery import Celery
+from celery import Celery  # type: ignore
 import os
 
 BROKER = os.getenv("REDIS_URL", "redis://redis:6379/0")
