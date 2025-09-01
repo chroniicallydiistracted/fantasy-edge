@@ -1,5 +1,23 @@
 # Implementation and Status Report
 
+## Repository Cleanup and Web App Groundwork
+
+### Changes Made
+- Removed Windows `:Zone.Identifier` files accidentally committed to version control.
+- Added `*:Zone.Identifier` to `.gitignore` to prevent future commits of NTFS metadata.
+- Standardized `apps/api/.env.example` placeholders to use `REPLACE_ME` and aligned variable names with the build plan.
+- Introduced a reusable `apiFetch` helper in `apps/web/lib/api.ts` and updated the leagues page to use it.
+- Added an ESLint configuration and `lint` script for the web app to support CI.
+
+### Successes
+- `pnpm lint` and `pnpm build` run cleanly for the web application.
+- Repository no longer contains extraneous platform metadata files.
+
+### Outstanding Tasks
+- Flesh out additional web pages and components.
+- Integrate OAuth flow once API endpoints are available.
+- Expand unit and integration tests for the web layer.
+
 ## Phase 0 — Infra & CI Skeleton
 
 ### Status: ✅ COMPLETED
