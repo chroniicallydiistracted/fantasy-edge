@@ -1,6 +1,6 @@
 # Implementation and Status Report
 
-Date: 2025-09-02
+Date: 2025-09-01
 
 ## Phase Overview
 - **Phase 0 – Infra & CI Skeleton**: Completed. Docker-compose spins up API, web, Redis, Postgres, and worker; GitHub Actions run linting, type checking, tests, and Docker builds.
@@ -13,15 +13,16 @@ Date: 2025-09-02
 - **Phase 7 – Projection Pipeline**: Completed. Worker persists offensive projections to the database and an API endpoint serves player projections with variance and category breakdowns.
 - **Phase 8 – Lineup Optimization**: Initial optimizer package providing a backtracking algorithm to fill roster slots based on projected points, with unit tests.
 - **Phase 9 – Waivers & Streamers**: Implemented Celery `waiver_shortlist` task and API endpoints for team waivers and DEF/IDP streamers with deterministic ranking tests.
-- **Phases 10–13**: Not started. Frontend pages, scheduling, security hardening, and deployment docs remain outstanding.
+- **Phase 10 – Frontend (Next.js)**: In progress. Added Yahoo login page and leagues table using TanStack Table; dependencies for Recharts and TanStack Table installed.
+- **Phases 11–13**: Not started. Scheduling, security hardening, and deployment docs remain outstanding.
 - **Timezone Handling**: Replaced all uses of `datetime.utcnow()` with `datetime.now(datetime.UTC)` across API modules and tests.
 
 ## Production Readiness
-Phases 0–9 have passing tests and are suitable for production usage. Later phases remain undeveloped.
+Phases 0–9 have passing tests and are suitable for production usage. Phase 10 frontend work has begun but is incomplete; later phases remain undeveloped.
 
 ## Next Steps
-Focus on Phase 10 frontend expansion and proceed through remaining phases as outlined in `docs/FOLLOWUP.md`.
+Continue Phase 10 frontend expansion—matchup, waivers, streamers, and settings pages—then proceed through remaining phases as outlined in `docs/FOLLOWUP.md`.
 
 ---
 
-*Maintained by ChatGPT on 2025-09-02*
+*Maintained by ChatGPT on 2025-09-01*

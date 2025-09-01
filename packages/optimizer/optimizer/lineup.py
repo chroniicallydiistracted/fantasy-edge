@@ -1,12 +1,15 @@
 """Lineup optimization utilities."""
+
 from __future__ import annotations
 
-from typing import Iterable, List, Mapping, Sequence, Tuple, Set
+from typing import Any, Iterable, List, Mapping, Sequence, Tuple, Set, cast
 
 Player = Mapping[str, object]
 
 
-def optimize_lineup(players: Sequence[Player], roster_slots: Sequence[str]) -> Tuple[List[str], float]:
+def optimize_lineup(
+    players: Sequence[Player], roster_slots: Sequence[str]
+) -> Tuple[List[str], float]:
     """Return the optimal lineup and total projected points.
 
     Parameters
@@ -40,12 +43,14 @@ def optimize_lineup(players: Sequence[Player], roster_slots: Sequence[str]) -> T
         for i, p in enumerate(players):
             if i in used:
                 continue
-            p_positions = set(p.get("positions", []))
+            positions = cast(Iterable[str], p.get("positions", []))
+            p_positions = set(positions)
             if not allowed.intersection(p_positions):
                 continue
             used.add(i)
             current.append(str(p.get("id")))
-            backtrack(idx + 1, used, current, score + float(p.get("points", 0)))
+            points = cast(Any, p.get("points", 0))
+            backtrack(idx + 1, used, current, score + float(points))
             current.pop()
             used.remove(i)
 
