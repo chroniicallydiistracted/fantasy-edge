@@ -18,11 +18,15 @@ sys.path.append(str(Path(__file__).resolve().parents[2] / "apps/api"))
 sys.path.append(str(Path(__file__).resolve().parents[2] / "packages"))
 from app.models import (  # type: ignore  # noqa: E402
     Injury,
+    League,
     Player,
     PlayerLink,
     Projection,
+    RosterSlot,
+    Team,
     Weather,
 )
+from app.waivers import compute_waiver_shortlist  # type: ignore  # noqa: E402
 from projections import project_offense  # type: ignore  # noqa: E402
 from sqlalchemy.exc import SQLAlchemyError
 
@@ -184,6 +188,29 @@ def project_week(week: int) -> int:
     session = SessionLocal()
     try:
         return generate_projections(session, week)
+    finally:
+        session.close()
+
+
+def waiver_shortlist_sync(
+    session, league_id: int, week: int, horizon: int = 1
+) -> Dict[int, Any]:
+    league = session.query(League).filter_by(id=league_id).first()
+    if not league:
+        return {}
+    result: Dict[int, Any] = {}
+    for team in league.teams:
+        result[team.id] = compute_waiver_shortlist(session, team.id, week, horizon)
+    return result
+
+
+@celery.task
+def waiver_shortlist(league_id: int, week: int, horizon: int = 1) -> Dict[int, Any]:
+    if SessionLocal is None:
+        return {}
+    session = SessionLocal()
+    try:
+        return waiver_shortlist_sync(session, league_id, week, horizon)
     finally:
         session.close()
 
