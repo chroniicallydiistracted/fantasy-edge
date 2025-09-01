@@ -9,6 +9,10 @@ class Settings(BaseSettings):
     jwt_secret: str = "change-me"
     token_crypto_key: str = "REPLACE_ME"  # 32+ character key for Fernet encryption
     allow_debug_user: bool = False  # Enable debug bypass header
+    cors_origins: list[str] = [
+        "http://localhost:3000",
+        "https://misfits.westfam.media",
+    ]
     nws_user_agent: str = "League of Misfits Edge (contact: you@example.com)"
 
     class Config:
