@@ -21,13 +21,15 @@ class SessionManager:
     def set_session_cookie(response: Response, user_id: int) -> None:
         """Set the session cookie in the response"""
         token = SessionManager.create_token(user_id)
+        secure = not settings.allow_debug_user
+        samesite = "None" if secure else "Lax"
         response.set_cookie(
             key=SessionManager.COOKIE_NAME,
             value=token,
-            httponly=True,  # Not accessible from JavaScript
-            samesite="Lax",  # CSRF protection
-            secure=False,  # Set to True in production
-            max_age=60 * 60 * 24 * 7,  # 7 days in seconds
+            httponly=True,
+            samesite=samesite,
+            secure=secure,
+            max_age=60 * 60 * 24 * 7,
         )
 
     @staticmethod
