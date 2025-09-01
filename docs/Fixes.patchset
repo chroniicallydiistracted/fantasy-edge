@@ -196,6 +196,7 @@ index f0dce4f..de4c547 100644
  DATABASE_URL=postgresql+psycopg://REPLACE_ME:REPLACE_ME@db:5432/ff
  NWS_USER_AGENT="Fantasy Edge (contact: REPLACE_ME)"
  NIGHTLY_SYNC_CRON=0 3 * * *
+
 diff --git a/.env.example b/.env.example
 index a9016e0..3b7f988 100644
 --- a/.env.example
@@ -224,7 +225,7 @@ index b42f367..996ab1c 100644
 +# docker-compose sets REDIS_URL=redis://redis:6379/0 for local services
  ```
  
- - API: http://localhost:8000/health
+ - API: http://localhost:8000/healthp
 @@ -21,7 +22,7 @@ docker compose -f infra/docker-compose.dev.yml up --build
  
  ### API / Worker
@@ -299,3 +300,4 @@ index de4c547..ac827dd 100644
  DATABASE_URL=postgresql+psycopg://REPLACE_ME:REPLACE_ME@db:5432/ff
  NWS_USER_AGENT="Fantasy Edge (contact: REPLACE_ME)"
  NIGHTLY_SYNC_CRON=0 3 * * *
+
