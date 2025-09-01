@@ -12,6 +12,7 @@ cp services/worker/.env.example services/worker/.env
 
 # start Postgres, Redis, API, web, and worker
 docker compose -f infra/docker-compose.dev.yml up --build
+# docker-compose sets REDIS_URL=redis://redis:6379/0 for local services
 ```
 
 - API: http://localhost:8000/health
@@ -21,7 +22,7 @@ docker compose -f infra/docker-compose.dev.yml up --build
 
 ### API / Worker
 - `DATABASE_URL` — Postgres connection string
-- `REDIS_URL` — Upstash Redis connection
+- `REDIS_URL` — Upstash Redis connection (use `rediss://` in production; `redis://redis:6379/0` for local Docker)
 - `JWT_SECRET` — signing key for session JWTs
 - `TOKEN_CRYPTO_KEY` — base64(32-byte) key for Fernet token encryption
 - `YAHOO_CLIENT_ID` / `YAHOO_CLIENT_SECRET` — Yahoo OAuth credentials

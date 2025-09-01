@@ -196,3 +196,108 @@ index f0dce4f..de4c547 100644
  DATABASE_URL=postgresql+psycopg://REPLACE_ME:REPLACE_ME@db:5432/ff
  NWS_USER_AGENT="Fantasy Edge (contact: REPLACE_ME)"
  NIGHTLY_SYNC_CRON=0 3 * * *
+
+diff --git a/.env.example b/.env.example
+index a9016e0..3b7f988 100644
+--- a/.env.example
++++ b/.env.example
+@@ -3,9 +3,10 @@ NEXT_PUBLIC_API_BASE=
+ 
+ # API
+ DATABASE_URL=
+-REDIS_URL=
++# Use rediss:// for Upstash TLS; docker-compose uses redis://redis:6379/0 for local dev
++REDIS_URL=rediss://:REPLACE_ME@HOST:PORT
+ JWT_SECRET=
+-NWS_USER_AGENT= "Fantasy Edge (contact: you@example.com)"
++NWS_USER_AGENT="Fantasy Edge (contact: you@example.com)"
+ # base64-encoded 32-byte key for Fernet encryption
+ TOKEN_CRYPTO_KEY=
+ 
+diff --git a/README.md b/README.md
+index b42f367..996ab1c 100644
+--- a/README.md
++++ b/README.md
+@@ -12,6 +12,7 @@ cp services/worker/.env.example services/worker/.env
+ 
+ # start Postgres, Redis, API, web, and worker
+ docker compose -f infra/docker-compose.dev.yml up --build
++# docker-compose sets REDIS_URL=redis://redis:6379/0 for local services
+ ```
+ 
+ - API: http://localhost:8000/healthp
+@@ -21,7 +22,7 @@ docker compose -f infra/docker-compose.dev.yml up --build
+ 
+ ### API / Worker
+ - `DATABASE_URL` — Postgres connection string
+-- `REDIS_URL` — Upstash Redis connection
++- `REDIS_URL` — Upstash Redis connection (use `rediss://` in production; `redis://redis:6379/0` for local Docker)
+ - `JWT_SECRET` — signing key for session JWTs
+ - `TOKEN_CRYPTO_KEY` — base64(32-byte) key for Fernet token encryption
+ - `YAHOO_CLIENT_ID` / `YAHOO_CLIENT_SECRET` — Yahoo OAuth credentials
+diff --git a/apps/api/.env.example b/apps/api/.env.example
+index c31abb4..ad1d571 100644
+--- a/apps/api/.env.example
++++ b/apps/api/.env.example
+@@ -1,8 +1,9 @@
+ # API Configuration
+ DATABASE_URL=postgresql+psycopg://REPLACE_ME:REPLACE_ME@db:5432/ff
+-REDIS_URL=redis://redis:6379/0
++# Upstash Redis (TLS); use redis://redis:6379/0 for local dev
++REDIS_URL=rediss://:REPLACE_ME@HOST:PORT
+ JWT_SECRET=REPLACE_ME
+-TOKEN_CRYPTO_KEY=REPLACE_ME
++TOKEN_CRYPTO_KEY=REPLACE_ME  # base64-encoded 32-byte key for Fernet
+ ALLOW_DEBUG_USER=false
+ CORS_ORIGINS=http://localhost:3000,https://misfits.westfam.media
+ 
+diff --git a/docs/FINDINGS.md b/docs/FINDINGS.md
+index 7832456..b98882c 100644
+--- a/docs/FINDINGS.md
++++ b/docs/FINDINGS.md
+@@ -1,4 +1,3 @@
+ # Findings
+ 
+-1. **[Minor][Cache]** `apps/api/.env.example:2-3` — Sample Redis URL uses non-TLS `redis://`, but production Upstash requires `rediss://` for encrypted connections.
+-2. **[Minor][Cache]** `services/worker/.env.example:2` — Worker example also uses `redis://`, which doesn't match the mandated TLS `rediss://` scheme.
++_No outstanding findings._
+diff --git a/docs/Incorrect-or-Incomplete.md b/docs/Incorrect-or-Incomplete.md
+index d46b4da..2695a1c 100644
+--- a/docs/Incorrect-or-Incomplete.md
++++ b/docs/Incorrect-or-Incomplete.md
+@@ -1,4 +1,3 @@
+ # Incorrect or Incomplete Items
+ 
+-* `apps/api/.env.example:2-3` — Redis URL uses `redis://`; should be `rediss://` for Upstash TLS.
+-* `services/worker/.env.example:2` — Redis URL uses `redis://`; should be `rediss://`.
++_None._
+diff --git a/docs/PR-Plan.md b/docs/PR-Plan.md
+index 1f2718f..19fb4f8 100644
+--- a/docs/PR-Plan.md
++++ b/docs/PR-Plan.md
+@@ -1,11 +1,3 @@
+ # PR Plan
+ 
+-1. **Switch sample Redis URLs to TLS**
+-   - Scope: update `apps/api/.env.example` and `services/worker/.env.example` to use `rediss://` and document the Upstash format.
+-   - Test Plan: `docker compose -f infra/docker-compose.dev.yml up` to verify API and worker connect using TLS URLs.
+-   - Acceptance: Environment samples reflect TLS scheme and services boot without errors.
+-
+-2. **Document local Redis usage**
+-   - Scope: clarify in README that production uses `rediss://` while local development uses `redis://` via Docker.
+-   - Test Plan: follow README setup on a fresh clone to ensure no confusion for developers.
+-   - Acceptance: Developers understand when to use TLS vs non-TLS URLs.
++No pending items.
+diff --git a/services/worker/.env.example b/services/worker/.env.example
+index de4c547..ac827dd 100644
+--- a/services/worker/.env.example
++++ b/services/worker/.env.example
+@@ -1,5 +1,6 @@
+ # Worker Configuration
+-REDIS_URL=redis://redis:6379/0
++# Upstash Redis (TLS); use redis://redis:6379/0 for local dev
++REDIS_URL=rediss://:REPLACE_ME@HOST:PORT
+ DATABASE_URL=postgresql+psycopg://REPLACE_ME:REPLACE_ME@db:5432/ff
+ NWS_USER_AGENT="Fantasy Edge (contact: REPLACE_ME)"
+ NIGHTLY_SYNC_CRON=0 3 * * *
+
