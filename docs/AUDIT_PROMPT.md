@@ -15,7 +15,7 @@
 * **Infra (current):** Web: **Vercel** (`misfits.westfam.media`). API/Worker: **Render** (`api.misfits.westfam.media`). **Database:** Neon Postgres. **Cache/PubSub:** Upstash Redis.
 * **Auth:** Yahoo OAuth (`fspt-r` now; `fspt-w` optional later). Tokens encrypted at rest.
 * **Live:** SSE endpoint `/live/subscribe` backed by server-side pollers and Redis pub/sub.
-* **Strict exclusions:** No weather/NWS/WAF features. No Fly.io.
+* **Strict exclusions:** No Fly.io usage.
 
 ## 1) Absolute Deliverables (produce all)
 
@@ -29,7 +29,6 @@
 ## 2) Mandatory Stack Corrections
 
 **Purge Fly.io:** search `fly\.toml|flyctl|fly\.io|FLY_` (regex). Delete artifacts, scripts, envs, docs. Replace with **Render** equivalents (`render.yaml`, health checks, deploy steps). Provide exact file diffs.
-**Remove Weather Context:** search case-insensitive `weather|NWS|WAF|forecast|gridpoints`. Delete/strip code, UI, tests, and docs; where intertwined, isolate behind a feature flag or remove cleanly. Provide diffs.
 
 ## 3) Canonical Environment (use these names)
 
@@ -91,7 +90,7 @@
 
 ### 4.6 Env & Secrets
 
-* `.env.sample` is complete and matches code. No plaintext secrets committed. Variable names consistent across code, CI, and deploy targets. CORS configured to `https://misfits.westfam.media`.
+* `.env.example` is complete and matches code. No plaintext secrets committed. Variable names consistent across code, CI, and deploy targets. CORS configured to `https://misfits.westfam.media`.
 
 ### 4.7 CI/CD
 
@@ -107,7 +106,6 @@
 ## 5) Mandatory Searches & Actions
 
 1. **Fly.io** — Regex: `fly\.toml|flyctl|fly\.io|FLY_` → remove & replace with Render equivalents; update docs.
-2. **Weather** — Case-insensitive `weather|NWS|WAF|forecast|gridpoints` → remove code/UI/tests/docs; document any coupling and remove/flag.
 3. **Next pitfalls** — `useSearchParams\(\)` must be wrapped in Suspense where appropriate; detect any `pages/` directory.
 4. **Leaky provider calls** — `apps/web` search for `fetch\(.*(espn|yahoo)`; these must be server-side only.
 5. **Secrets** — search for `YAHOO_CLIENT_SECRET|JWT_SECRET|TOKEN_CRYPTO_KEY` in tracked files.
@@ -165,7 +163,6 @@
 
 * Do not introduce paid services.
 * Do not reintroduce Fly.io.
-* Do not include weather features or references.
 * Keep Yahoo flow read-only (`fspt-r`) unless explicitly expanded; document any scope change.
 * All fixes must be real, compilable patches — no pseudocode, no placeholders except `REPLACE_ME` for secrets.
 
@@ -175,7 +172,6 @@
 * Explicit Incorrect/Incomplete list with file paths and line spans.
 * Patchset applies cleanly; builds/tests pass locally for web and api.
 * All Fly.io traces removed; stack uses **Vercel + Render + Neon + Upstash** only.
-* No weather content in code, tests, or docs.
 
 ---
 
