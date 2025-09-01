@@ -1,0 +1,33 @@
+services:
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: ff
+      POSTGRES_PASSWORD: ff
+      POSTGRES_DB: ff
+    ports: ["5432:5432"]
+  redis:
+    image: redis:7
+    ports: ["6379:6379"]
+  api:
+    build: ../apps/api
+    env_file: ../.env
+    environment:
+      DATABASE_URL: postgresql+psycopg://ff:ff@db:5432/ff
+      REDIS_URL: redis://redis:6379/0
+    ports: ["8000:8000"]
+    depends_on: [db, redis]
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+  worker:
+    build: ../services/worker
+    env_file: ../.env
+    environment:
+      REDIS_URL: redis://redis:6379/0
+    depends_on: [redis]
+    command: python -c "from tasks import ping; print(ping())"
+  web:
+    build: ../apps/web
+    environment:
+      NEXT_PUBLIC_API_BASE: http://localhost:8000
+    ports: ["3000:3000"]
+    command: npm run dev

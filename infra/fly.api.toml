@@ -1,0 +1,6 @@
+# Optional Fly.io config (not used in dev). Fill in app name later.
+app = "REPLACE_ME_api"
+kill_signal = "SIGINT"
+kill_timeout = 5
+[env]
+PORT = "8000"

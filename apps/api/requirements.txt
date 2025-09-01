@@ -1,0 +1,14 @@
+fastapi>=0.116
+uvicorn[standard]>=0.30
+pydantic-settings>=2.4
+sqlalchemy>=2.0
+psycopg[binary]>=3.2
+redis>=5.0
+celery>=5.3
+python-dotenv>=1.0
+requests>=2.32
+orjson>=3.10
+numpy>=2.0
+pandas>=2.2
+ortools>=9.10
+cryptography>=43.0

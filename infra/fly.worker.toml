@@ -1,0 +1,4 @@
+# Optional Fly.io worker config (not used in dev). Fill in app name later.
+app = "REPLACE_ME_worker"
+kill_signal = "SIGINT"
+kill_timeout = 5
