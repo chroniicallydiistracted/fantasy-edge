@@ -137,15 +137,34 @@
 
 ---
 
+## Phase 3 — Yahoo League Read Endpoints
+
+### Status: ✅ COMPLETED
+
+### Changes Made
+- Implemented `YahooFantasyClient` with automatic token refresh and retry logic.
+- Added session-based user dependency and Yahoo read endpoints:
+  - `/yahoo/leagues`
+  - `/yahoo/league/{league_key}` (includes normalized scoring map skeleton)
+  - `/yahoo/league/{league_key}/teams`
+  - `/yahoo/league/{league_key}/rosters?week=N`
+  - `/yahoo/league/{league_key}/matchups?week=N`
+- Added tests mocking Yahoo HTTP responses, auth guard, and token refresh path.
+
+### Outstanding Issues
+- None
+
+---
+
 ## Overall Status
 
 ### Completed Tasks
 - Phase 0: ✅ Infra & CI Skeleton
 - Phase 1: ✅ Auth Foundations
 - Phase 2: ✅ Yahoo OAuth
+- Phase 3: ✅ Yahoo League Read Endpoints
 
 ### Upcoming Phases
-- Phase 3: User Management
 - Phase 4: Fantasy Data Integration
 - Phase 5: Optimization Engine
 
