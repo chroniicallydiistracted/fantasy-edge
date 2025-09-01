@@ -1,7 +1,9 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
+from sqlalchemy.orm import Session
 from .settings import settings
 from .routers import health, auth, yahoo, optimize
+from .deps import get_db
 
 app = FastAPI(title="Fantasy Edge API")
 

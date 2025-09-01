@@ -1,0 +1,130 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  api:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.11"
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        cd apps/api
+        pip install -r requirements.txt
+        pip install ruff black mypy pytest
+
+    - name: Lint with ruff
+      run: |
+        cd apps/api
+        ruff check .
+
+    - name: Format with black
+      run: |
+        cd apps/api
+        black --check .
+
+    - name: Type check with mypy
+      run: |
+        cd apps/api
+        mypy app/
+
+    - name: Test with pytest
+      run: |
+        cd apps/api
+        pytest
+
+  worker:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.11"
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        cd services/worker
+        pip install -r requirements.txt
+        pip install ruff black mypy pytest
+
+    - name: Lint with ruff
+      run: |
+        cd services/worker
+        ruff check .
+
+    - name: Format with black
+      run: |
+        cd services/worker
+        black --check .
+
+    - name: Type check with mypy
+      run: |
+        cd services/worker
+        mypy tasks.py
+
+    - name: Test with pytest
+      run: |
+        cd services/worker
+        pytest
+
+  web:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: "20"
+        cache: "npm"
+        cache-dependency-path: apps/web/package-lock.json
+
+    - name: Install dependencies
+      run: |
+        cd apps/web
+        npm ci
+        npm install -g pnpm
+
+    - name: Lint with pnpm
+      run: |
+        cd apps/web
+        pnpm lint
+
+    - name: Build with pnpm
+      run: |
+        cd apps/web
+        pnpm build
+
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Build API image
+      run: |
+        docker build -t fantasy-edge-api apps/api
+
+    - name: Build Worker image
+      run: |
+        docker build -t fantasy-edge-worker services/worker
+
+    - name: Build Web image
+      run: |
+        docker build -t fantasy-edge-web apps/web

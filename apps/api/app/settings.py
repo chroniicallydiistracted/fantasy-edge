@@ -7,6 +7,9 @@ class Settings(BaseSettings):
     yahoo_client_secret: str = ""
     yahoo_redirect_uri: str = "http://localhost:8000/auth/yahoo/callback"
     jwt_secret: str = "change-me"
+    session_secret: str = "change-me"
+    token_crypto_key: str = "REPLACE_ME"  # 32+ character key for Fernet encryption
+    allow_debug_user: bool = False  # Enable debug bypass header
     nws_user_agent: str = "League of Misfits Edge (contact: you@example.com)"
 
     class Config:
