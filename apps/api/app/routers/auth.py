@@ -1,5 +1,5 @@
 import base64, os
-from fastapi import APIRouter, Depends, Response, Header
+from fastapi import APIRouter, Depends, Response
 from ..settings import settings
 from ..deps import get_debug_user
 from ..session import SessionManager
@@ -27,7 +27,6 @@ def yahoo_callback(code: str, state: str):
 @router.get("/session/debug", response_model=dict)
 def debug_session(
     response: Response,
-    authorization: str = Header(None),
     current_user: User = Depends(get_debug_user)
 ):
     """Debug session endpoint - sets session cookie for dev user if enabled"""

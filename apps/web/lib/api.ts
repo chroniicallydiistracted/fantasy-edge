@@ -3,9 +3,12 @@ export const API_BASE =
 
 export async function apiFetch<T>(
   path: string,
-  init?: RequestInit
+  init: RequestInit = {}
 ): Promise<T> {
-  const res = await fetch(`${API_BASE}${path}`, init);
+  const res = await fetch(`${API_BASE}${path}`, {
+    credentials: "include",
+    ...init,
+  });
   if (!res.ok) {
     throw new Error(`API request failed with status ${res.status}`);
   }
