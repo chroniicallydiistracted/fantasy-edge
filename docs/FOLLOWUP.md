@@ -1,6 +1,6 @@
 # Follow-Up Tasks
 
-Date: 2025-09-02
+Date: 2025-09-03
 
 ## Items Requiring Attention
 1. **Waivers & Streamers (Phase 9)**
@@ -11,8 +11,6 @@ Date: 2025-09-02
    - Add task scheduling with configurable intervals and implement logging/backoff/security hardening.
 4. **Docs & Deployment Config (Phase 13)**
    - Author comprehensive README, provide Postman/Thunder collections, and add deployment templates.
-5. **Web Testing Script**
-   - Add `npm test` or equivalent for the web app, or update docs to describe testing approach.
 
 ## Signature
-Reviewed by ChatGPT on 2025-09-02
+Reviewed by ChatGPT on 2025-09-03
