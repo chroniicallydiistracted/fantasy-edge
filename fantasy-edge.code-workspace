@@ -19,6 +19,8 @@
       "**/.next": true,
       "**/node_modules": true
     },
-    "Codegeex.Chat.fontSize": 11
+    "Codegeex.Chat.fontSize": 11,
+    "Codegeex.CompletionDelay": 0.4,
+    "Codegeex.Chat.LanguagePreference": "English"
   }
 }
