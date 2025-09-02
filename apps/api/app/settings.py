@@ -5,7 +5,8 @@ class Settings(BaseSettings):
     redis_url: str = "rediss://redis:6379/0"
     yahoo_client_id: str = ""
     yahoo_client_secret: str = ""
-    yahoo_redirect_uri: str = "http://localhost:8000/auth/yahoo/callback"
+    yahoo_redirect_uri: str = "https://api.misfits.westfam.media/auth/yahoo/callback"
+    web_base_url: str = "https://misfits.westfam.media"
     jwt_secret: str = "REPLACE_ME"
     token_crypto_key: str = "REPLACE_ME"  # base64-encoded 32-byte key for Fernet encryption
     allow_debug_user: bool = False  # Enable debug bypass header
@@ -13,6 +14,8 @@ class Settings(BaseSettings):
     nws_user_agent: str = "Fantasy Edge (contact: you@example.com)"
     live_poll_interval: int = 8000  # milliseconds between polling for game data
     live_provider: str = "yahoo"  # Live data provider
+    session_cookie_name: str = "fe_session"
+    session_ttl_seconds: int = 2592000  # 30 days
 
     @property
     def cors_origins_list(self) -> list[str]:

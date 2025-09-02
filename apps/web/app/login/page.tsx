@@ -1,22 +1,14 @@
-"use client";
-
-import { API_BASE } from "../../lib/api";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export default function LoginPage() {
-  const router = useRouter();
-  const handleLogin = () => {
-    router.push(`${API_BASE}/auth/yahoo/login`);
-  };
-
   return (
     <div className="flex h-screen items-center justify-center">
-      <button
-        onClick={handleLogin}
+      <Link
+        href="https://api.misfits.westfam.media/auth/yahoo/login"
         className="rounded bg-blue-600 px-4 py-2 font-semibold text-white hover:bg-blue-700"
       >
         Sign in with Yahoo
-      </button>
+      </Link>
     </div>
   );
 }
