@@ -5,14 +5,14 @@ services:
     plan: free
     rootDir: apps/api
     buildCommand: pip install -r requirements.txt
-    preDeployCommand: alembic upgrade head
-    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    # preDeployCommand: alembic upgrade head   # remove on Free
+    startCommand: bash -lc 'alembic upgrade head && exec uvicorn app.main:app --host 0.0.0.0 --port $PORT'
     healthCheckPath: /health
     autoDeploy: true
     envVars:
-      - key: DATABASE_URL         # Neon (psycopg v3)
+      - key: DATABASE_URL         # MUST use psycopg v3 driver
         sync: false
-      - key: REDIS_URL            # Upstash
+      - key: REDIS_URL
         sync: false
       - key: YAHOO_CLIENT_ID
         sync: false
@@ -26,4 +26,3 @@ services:
         sync: false
       - key: CORS_ORIGINS
         value: https://misfits.westfam.media
-
