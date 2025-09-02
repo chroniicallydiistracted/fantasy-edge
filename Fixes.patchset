@@ -1,0 +1,137 @@
+*** Begin Patch
+*** Update File: apps/web/next.config.js
+@@
+-/** @type {import('next').NextConfig} */
+-const nextConfig = { experimental: { serverActions: { allowedOrigins: ["*"] } } };
+-module.exports = nextConfig;
++/** @type {import('next').NextConfig} */
++const nextConfig = {
++  experimental: {
++    serverActions: {
++      allowedOrigins: ["http://localhost:3000", "https://misfits.westfam.media"],
++    },
++  },
++};
++
++export default nextConfig;
+*** End Patch
+*** Begin Patch
+*** Update File: apps/web/postcss.config.js
+@@
+-module.exports = { plugins: { tailwindcss: {}, autoprefixer: {} } };
++export default { plugins: { tailwindcss: {}, autoprefixer: {} } };
+*** End Patch
+*** Begin Patch
+*** Delete File: apps/api/app/waivers.py
+*** End Patch
+*** Begin Patch
+*** Add File: apps/api/app/waiver_service.py
++from typing import Any, Dict, List
++
++from sqlalchemy.orm import Session
++
++from .models import Player, Projection, RosterSlot
++
++
++def compute_waiver_shortlist(
++    session: Session, team_id: int, week: int, horizon: int = 1
++) -> List[Dict[str, Any]]:
++    """Rank free agents by projected improvement over the worst starter."""
++
++    roster_ids = [
++        rs.player_id
++        for rs in session.query(RosterSlot.player_id).filter_by(
++            team_id=team_id, week=week
++        )
++    ]
++    if not roster_ids:
++        return []
++
++    worst_proj = (
++        session.query(Projection.projected_points)
++        .filter(Projection.player_id.in_(roster_ids), Projection.week == week)
++        .order_by(Projection.projected_points.asc())
++        .limit(1)
++        .scalar()
++    )
++    if worst_proj is None:
++        return []
++
++    candidates = (
++        session.query(Player, Projection.projected_points)
++        .join(Projection, (Player.id == Projection.player_id) & (Projection.week == week))
++        .filter(~Player.id.in_(roster_ids))
++        .all()
++    )
++
++    results: List[Dict[str, Any]] = []
++    acquisition_prob = max(0.0, 1.0 - 0.1 * (horizon - 1))
++    for player, proj in candidates:
++        results.append(
++            {
++                "player_id": player.id,
++                "name": player.name,
++                "projected_points": proj,
++                "delta": proj - worst_proj,
++                "acquisition_prob": acquisition_prob,
++            }
++        )
++
++    results.sort(key=lambda x: x["delta"], reverse=True)
++    return results
+*** End Patch
+*** Begin Patch
+*** Update File: apps/api/app/routers/waivers.py
+@@
+-from ..waivers import compute_waiver_shortlist
++from ..waiver_service import compute_waiver_shortlist
+*** End Patch
+*** Begin Patch
+*** Update File: services/worker/tasks.py
+@@
+-from app.waivers import compute_waiver_shortlist  # type: ignore  # noqa: E402
++from app.waiver_service import compute_waiver_shortlist  # type: ignore  # noqa: E402
+*** End Patch
+*** Begin Patch
+*** Update File: apps/api/app/settings.py
+@@
+-    redis_url: str = "redis://redis:6379/0"
++    redis_url: str = "rediss://redis:6379/0"
+*** End Patch
+*** Begin Patch
+*** Update File: services/worker/celery_app.py
+@@
+-BROKER = os.getenv("REDIS_URL", "redis://redis:6379/0")
++BROKER = os.getenv("REDIS_URL", "rediss://redis:6379/0")
+*** End Patch
+*** Begin Patch
+*** Update File: .github/workflows/ci.yml
+@@
+-      - name: Install dependencies
+-        run: |
+-          cd apps/web
+-          npm ci
+-          npm install -g pnpm
++      - name: Install dependencies
++        run: |
++          cd apps/web
++          pnpm install
+@@
+-      - name: Lint with pnpm
+-        run: |
+-          cd apps/web
+-          pnpm lint
++      - name: Lint
++        run: |
++          cd apps/web
++          pnpm lint
+@@
+-      - name: Build with pnpm
+-        run: |
+-          cd apps/web
+-          pnpm build
++      - name: Build
++        run: |
++          cd apps/web
++          pnpm build
+*** End Patch
