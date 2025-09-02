@@ -1,5 +1,4 @@
 # apps/api/app/models.py
-from datetime import datetime
 from sqlalchemy import (
     Column, Integer, String, DateTime, ForeignKey, Text, Boolean, Float, JSON,
     UniqueConstraint, Index, func

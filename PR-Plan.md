@@ -15,3 +15,11 @@
 4. **PR-4: CI and dependency hygiene**
    - Use `pnpm install` in web CI job and drop unused root `package.json`/lockfiles.
    - Tests: GitHub Actions workflow run on PR.
+
+5. **PR-5: SSE endpoint implementation**
+   - Replace placeholder logic in `apps/api/app/routers/live.py` with real Redis pub/sub and backoff.
+   - Tests: `ruff check`, `black --check`, `mypy apps/api/app/routers/live.py`, `pytest`.
+
+6. **PR-6: Database and worker cleanup**
+   - Adjust SQLAlchemy engine options for SQLite tests and introduce missing `Injury` model or refactor worker imports.
+   - Tests: `ruff check`, `black --check`, `mypy apps/api/app`, `pytest`.

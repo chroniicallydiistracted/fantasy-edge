@@ -2,7 +2,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
     database_url: str = "postgresql+psycopg://ff:ff@db:5432/ff"
-    redis_url: str = "redis://redis:6379/0"
+    redis_url: str = "rediss://redis:6379/0"
     yahoo_client_id: str = ""
     yahoo_client_secret: str = ""
     yahoo_redirect_uri: str = "http://localhost:8000/auth/yahoo/callback"

@@ -26,7 +26,7 @@ from app.models import (  # type: ignore  # noqa: E402
     Projection,
     Weather,
 )
-from app.waivers import compute_waiver_shortlist  # type: ignore  # noqa: E402
+from app.waiver_service import compute_waiver_shortlist  # type: ignore  # noqa: E402
 from projections import project_offense  # type: ignore  # noqa: E402
 from sqlalchemy.exc import SQLAlchemyError
 

@@ -1,10 +1,7 @@
 # Findings
 
-1. **[Blocker][Web]** `apps/web/postcss.config.js:1` — CommonJS export in an ESM package causes `pnpm build` to fail.
-2. **[Major][Web]** `apps/web/lib/live.ts:3-6` — SSE client never retries or backs off, so the stream drops permanently on disconnect.
-3. **[Major][API]** `apps/api/app/waivers.py` & `apps/api/app/routers/waivers.py` — duplicate module name `waivers` triggers MyPy import collisions.
-4. **[Minor][API]** `apps/api/app/settings.py:5` — default `redis_url` uses non-TLS `redis://`; Upstash requires `rediss://`.
-5. **[Major][Worker]** `services/worker/celery_app.py:7` — Celery broker defaults to `redis://` without TLS.
-6. **[Major][CI]** `.github/workflows/ci.yml:105-119` — Web job installs with npm then runs pnpm, mixing package managers.
-7. **[Minor][Web]** `apps/web/package-lock.json` and `apps/web/pnpm-lock.yaml` coexist, leading to inconsistent dependency locks.
-8. **[Minor][Repo]** `package.json:1-6` — root Node dependencies appear unused, increasing maintenance overhead.
+1. **[Blocker][API]** `apps/api/app/routers/live.py:15-32` — SSE endpoint only sends heartbeats and never subscribes to Redis, leaving live updates unimplemented.
+2. **[Major][API]** `apps/api/app/deps.py:17-23` — SQLAlchemy `create_engine` uses `pool_size`/`max_overflow` options that break with SQLite during tests.
+3. **[Major][API]** `apps/api/app/security.py:8-17` — TokenEncryptionService mixes bytes and str when deriving the Fernet key, triggering mypy type errors.
+4. **[Major][Worker]** `services/worker/tasks.py:21-28` — Tasks import an `Injury` model that does not exist in `app.models`, causing ImportError.
+5. **[Major][CI]** `apps/api/app/models.py:1` — `black --check` fails; at least 34 files require formatting.
