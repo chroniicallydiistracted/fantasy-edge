@@ -17,6 +17,7 @@ Date: 2025-09-03
 - **Phase 11 – Scheduling**: Added Celery beat schedules for nightly projection sync, Tuesday waiver shortlist, and a configurable game-day refresh interval with unit tests.
 - **Phase 12 – Security & Resilience**: Completed. Central logging masks secrets and emails, Yahoo client uses exponential backoff with jitter and snapshot support, CORS and cookie settings secured with tests.
 - **Phase 13 – Docs & Deploy Config**: Completed. Added root `README.md`, Postman collection, Render and Vercel templates, and CI smoke test hitting `/health`.
+- **Phase 14 – PostgreSQL Wiring**: Completed. SQLAlchemy engine/session with FastAPI dependency, ORM models for User, OAuthToken, League, Team, Player, PlayerLink, RosterSlot, Projection, Alembic migrations with Neon support, health check with DB connectivity, environment configuration for local and Neon, and minimal tests.
 - **Timezone Handling**: Replaced all uses of `datetime.utcnow()` with `datetime.now(datetime.UTC)` across API modules and tests.
 
 ## Audit and Phase 1 Fixes Implementation
@@ -58,6 +59,21 @@ A comprehensive audit of the Fantasy Edge repository was conducted against the v
 - **Issue**: The README.md and .env.example files were missing documentation for the LIVE_POLL_INTERVAL environment variable.
 - **Implementation**: Updated both files to include proper documentation for the new environment variable.
 - **Why**: Ensures that developers deploying the application have all the necessary information to configure the environment correctly.
+
+#### 6. PostgreSQL Wiring Implementation ✅ COMPLETED
+- **Issue**: The application needed a complete PostgreSQL implementation with SQLAlchemy, ORM models, migrations, and proper configuration for both local and Neon environments.
+- **Implementation**: 
+  - Updated deps.py with centralized SQLAlchemy engine and session with proper connection pooling
+  - Implemented complete ORM models for User, OAuthToken, League, Team, Player, PlayerLink, RosterSlot, and Projection
+  - Configured Alembic to read DATABASE_URL from environment with proper target metadata
+  - Created initial migration with all necessary constraints and indexes
+  - Enhanced health endpoint to verify database connectivity
+  - Updated .env.example with both local and Neon database URL examples
+  - Added preDeployCommand to render.yaml to run alembic upgrade head
+  - Created minimal tests for database connectivity and User CRUD operations
+  - Added verification and test scripts
+  - Created PostgreSQL setup documentation
+- **Why**: Provides a complete, production-ready PostgreSQL implementation with proper migrations, health checks, and testing.
 
 ### Issues and Outstanding Items
 

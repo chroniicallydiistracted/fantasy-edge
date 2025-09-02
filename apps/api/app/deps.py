@@ -2,6 +2,7 @@ from fastapi import Cookie, Depends, HTTPException, Header, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session, sessionmaker
+from sqlalchemy import text
 from jose import JWTError, jwt
 from typing import Optional
 from .models import User
@@ -14,7 +15,13 @@ from .yahoo_client import YahooFantasyClient
 # Security
 security = HTTPBearer()
 
-engine = create_engine(settings.database_url)
+# Database engine and session setup
+engine = create_engine(
+    settings.database_url,
+    pool_pre_ping=True,
+    pool_size=5,
+    max_overflow=5,
+)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 
