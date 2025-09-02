@@ -4,7 +4,7 @@ import os
 from celery import Celery  # type: ignore
 from celery.schedules import crontab
 
-BROKER = os.getenv("REDIS_URL", "redis://redis:6379/0")
+BROKER = os.getenv("REDIS_URL", "rediss://redis:6379/0")
 BACKEND = BROKER
 celery = Celery("edge", broker=BROKER, backend=BACKEND)
 celery.conf.task_routes = {"tasks.*": {"queue": "default"}}
