@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 
 from ..deps import get_db, get_current_user_session
 from ..models import User
-from ..waivers import compute_waiver_shortlist
+from ..waiver_service import compute_waiver_shortlist
 
 router = APIRouter()
 

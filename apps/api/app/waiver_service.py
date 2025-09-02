@@ -38,20 +38,16 @@ def compute_waiver_shortlist(
 
     results: List[Dict[str, Any]] = []
     acquisition_prob = max(0.0, 1.0 - 0.1 * (horizon - 1))
-    for player, points in candidates:
-        delta = points - worst_proj
-        if delta <= 0:
-            continue
+    for player, proj in candidates:
         results.append(
             {
                 "player_id": player.id,
                 "name": player.name,
-                "delta_xfp": round(delta, 2),
-                "acquisition_prob": round(acquisition_prob, 2),
+                "projected_points": proj,
+                "delta": proj - worst_proj,
+                "acquisition_prob": acquisition_prob,
             }
         )
 
-    results.sort(key=lambda r: (-r["delta_xfp"], r["player_id"]))
-    for idx, r in enumerate(results, start=1):
-        r["order"] = idx
+    results.sort(key=lambda x: x["delta"], reverse=True)
     return results
