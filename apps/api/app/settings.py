@@ -6,7 +6,7 @@ class Settings(BaseSettings):
     yahoo_client_id: str = ""
     yahoo_client_secret: str = ""
     yahoo_redirect_uri: str = "http://localhost:8000/auth/yahoo/callback"
-    jwt_secret: str = "change-me"
+    jwt_secret: str = "REPLACE_ME"
     token_crypto_key: str = "REPLACE_ME"  # base64-encoded 32-byte key for Fernet encryption
     allow_debug_user: bool = False  # Enable debug bypass header
     cors_origins: list[str] = [

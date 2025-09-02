@@ -1,303 +1,62 @@
-diff --git a/.env.example b/.env.example
-index 60c35e2..a9016e0 100644
---- a/.env.example
-+++ b/.env.example
-@@ -1,11 +1,6 @@
- # Web → API base
--
--FRONTEND_WEBSITE=
- NEXT_PUBLIC_API_BASE=
- 
--# Live  (once deployed)
--CUSTOM_DOMAIN_API=
--FALLBACK_API=
- # API
- DATABASE_URL=
- REDIS_URL=
-diff --git a/README.md b/README.md
-index cb9cd2c..b42f367 100644
---- a/README.md
-+++ b/README.md
-@@ -51,9 +51,8 @@ npm test
- 
- ## Deployment Templates
- 
--Fly.io and Vercel configuration files live under `infra/`:
--- `infra/fly.api.toml`
--- `infra/fly.worker.toml`
-+Deployment configuration files:
-+- `render.yaml`
- - `infra/vercel.json`
- 
--Populate app names and secrets before deploying.
-+Populate service names and secrets before deploying.
-diff --git a/apps/web/.env.example b/apps/web/.env.example
-index f9c1f64..76dd8da 100644
---- a/apps/web/.env.example
-+++ b/apps/web/.env.example
-@@ -1,4 +1,2 @@
- # Web Application Configuration
- NEXT_PUBLIC_API_BASE=http://localhost:8000
--NEXT_PUBLIC_APP_NAME="Fantasy Edge"
--NEXT_PUBLIC_APP_VERSION="1.0.0"
-diff --git a/docs/FINDINGS.md b/docs/FINDINGS.md
-index 5352de9..7832456 100644
---- a/docs/FINDINGS.md
-+++ b/docs/FINDINGS.md
-@@ -1,38 +1,4 @@
- # Findings
- 
--Date: 2025-09-01
--
--## Overview
--The repository is a monorepo containing:
--- **API** (`apps/api`) built with FastAPI and SQLAlchemy
--- **Web** (`apps/web`) built with Next.js 14
--- **Worker** (`services/worker`) using Celery
--- **Packages** (`packages/scoring`, `packages/projections`) providing scoring utilities and projection estimators
--
--## Completed & Production Ready
--- **Phase 0 – Infra & CI Skeleton**: Docker compose, service health endpoints, `.env.example` files, and CI workflow. Tests for API, worker, scoring, and projections all pass.
--- **Phase 1 – Auth Foundations**: User and OAuth token models, Fernet token encryption, JWT session cookies, debug bypass, and comprehensive tests.
--- **Phase 2 – Yahoo OAuth 3-Legged Flow**: OAuth login/callback endpoints with state verification, token refresh, and user info retrieval.
--- **Phase 3 – Yahoo League Read Endpoints**: Yahoo client with automatic refresh, endpoints for leagues, teams, rosters, and matchups, all covered by tests.
--- **Phase 4 – Database Schema Expansion & Seeding**: Models and migrations for leagues, teams, players, injuries, weather, projections, etc., plus idempotent seeding and migration tests.
--- **Phase 5 – Free Data Integrations**: Celery tasks for nflverse datasets, injury ingestion, weather forecasts, and WAF computation with caching and tests.
--- **Phase 6 – Scoring Engine**: Pure scoring utilities for offense, kickers, defense, and IDP with golden tests.
--
--## Partially Implemented
--- **Phase 7 – Projection Pipeline**: Basic offensive projection estimator and worker tasks exist with tests, but the pipeline is not yet wired into the API or web layers.
--
--## Not Started
--- **Phase 8 – Lineup Optimization** and subsequent phases (Waivers, Streamers, Frontend Pages, Scheduling, Security, Docs & Deploy Config) show no implementation.
--
--## Observations & Formatting Notes
--- The web app lacks a `test` script; `npm test` fails.
--- Documentation is minimal; README only covers basic dev commands.
--
--## Plan / Attack
--- Implement remaining phases, starting with integrating the projection pipeline.
--- Expand web UI, tests, and documentation.
--- Add `npm test` script or clarify testing approach for the web app.
--
-----
--
--*Reviewed and compiled by ChatGPT on 2025-09-01*
-+1. **[Minor][Cache]** `apps/api/.env.example:2-3` — Sample Redis URL uses non-TLS `redis://`, but production Upstash requires `rediss://` for encrypted connections.
-+2. **[Minor][Cache]** `services/worker/.env.example:2` — Worker example also uses `redis://`, which doesn't match the mandated TLS `rediss://` scheme.
-diff --git a/docs/IMPLEMENTATION_AND_STATUS_REPORT.md b/docs/IMPLEMENTATION_AND_STATUS_REPORT.md
-index 146e69b..c346a80 100644
---- a/docs/IMPLEMENTATION_AND_STATUS_REPORT.md
-+++ b/docs/IMPLEMENTATION_AND_STATUS_REPORT.md
-@@ -16,7 +16,7 @@ Date: 2025-09-03
- - **Phase 10 – Frontend (Next.js)**: In progress. Added Yahoo login page, leagues table, matchups, waivers, streamers, and settings pages with client-side CSV import; Node-based tests cover arithmetic, waiver mapping, and CSV parsing.
- - **Phase 11 – Scheduling**: Added Celery beat schedules for nightly projection sync, Tuesday waiver shortlist, and a configurable game-day refresh interval with unit tests.
- - **Phase 12 – Security & Resilience**: Completed. Central logging masks secrets and emails, Yahoo client uses exponential backoff with jitter and snapshot support, CORS and cookie settings secured with tests.
--- **Phase 13 – Docs & Deploy Config**: Completed. Added root `README.md`, Postman collection, Fly.io/Vercel templates, and CI smoke test hitting `/health`.
-+- **Phase 13 – Docs & Deploy Config**: Completed. Added root `README.md`, Postman collection, Render and Vercel templates, and CI smoke test hitting `/health`.
- - **Timezone Handling**: Replaced all uses of `datetime.utcnow()` with `datetime.now(datetime.UTC)` across API modules and tests.
- 
- ## Production Readiness
-diff --git a/docs/Incorrect-or-Incomplete.md b/docs/Incorrect-or-Incomplete.md
+diff --git a/apps/api/app/routers/live.py b/apps/api/app/routers/live.py
 new file mode 100644
-index 0000000..d46b4da
+index 0000000..e69de29
 --- /dev/null
-+++ b/docs/Incorrect-or-Incomplete.md
-@@ -0,0 +1,4 @@
-+# Incorrect or Incomplete Items
++++ b/apps/api/app/routers/live.py
+@@
++from fastapi import APIRouter
++from fastapi.responses import StreamingResponse
++import asyncio
 +
-+* `apps/api/.env.example:2-3` — Redis URL uses `redis://`; should be `rediss://` for Upstash TLS.
-+* `services/worker/.env.example:2` — Redis URL uses `redis://`; should be `rediss://`.
-diff --git a/docs/PR-Plan.md b/docs/PR-Plan.md
-new file mode 100644
-index 0000000..1f2718f
---- /dev/null
-+++ b/docs/PR-Plan.md
-@@ -0,0 +1,11 @@
-+# PR Plan
++router = APIRouter()
 +
-+1. **Switch sample Redis URLs to TLS**
-+   - Scope: update `apps/api/.env.example` and `services/worker/.env.example` to use `rediss://` and document the Upstash format.
-+   - Test Plan: `docker compose -f infra/docker-compose.dev.yml up` to verify API and worker connect using TLS URLs.
-+   - Acceptance: Environment samples reflect TLS scheme and services boot without errors.
 +
-+2. **Document local Redis usage**
-+   - Scope: clarify in README that production uses `rediss://` while local development uses `redis://` via Docker.
-+   - Test Plan: follow README setup on a fresh clone to ensure no confusion for developers.
-+   - Acceptance: Developers understand when to use TLS vs non-TLS URLs.
-diff --git a/infra/fly.api.toml b/infra/fly.api.toml
-deleted file mode 100644
-index 81a7671..0000000
---- a/infra/fly.api.toml
-+++ /dev/null
-@@ -1,14 +0,0 @@
--# Fly.io config for the API service.
--# Fill in the "app" name before deploying.
--app = "REPLACE_ME_api"
--primary_region = "iad"
--
--[build]
--  dockerfile = "../apps/api/Dockerfile"
--
--[env]
--  PORT = "8000"
--
--[http_service]
--  internal_port = 8000
--  force_https = true
-diff --git a/infra/fly.worker.toml b/infra/fly.worker.toml
-deleted file mode 100644
-index 9866cfe..0000000
---- a/infra/fly.worker.toml
-+++ /dev/null
-@@ -1,14 +0,0 @@
--# Fly.io config for the Celery worker service.
--# Fill in the "app" name before deploying.
--app = "REPLACE_ME_worker"
--primary_region = "iad"
--
--[build]
--  dockerfile = "../services/worker/Dockerfile"
--
--[env]
--  PORT = "8001"
--
--[http_service]
--  internal_port = 8001
--  force_https = true
++@router.get("/live/subscribe")
++async def subscribe() -> StreamingResponse:
++    async def event_stream():
++        while True:
++            yield "event: heartbeat\ndata: ok\n\n"
++            await asyncio.sleep(25)
++
++    return StreamingResponse(event_stream(), media_type="text/event-stream")
++
+diff --git a/apps/api/app/main.py b/apps/api/app/main.py
+index 46b7e3a..e5600c8 100644
+--- a/apps/api/app/main.py
++++ b/apps/api/app/main.py
+@@
+-from .routers import health, auth, yahoo, optimize, players, waivers, streamers
++from .routers import health, auth, yahoo, optimize, players, waivers, streamers, live
+@@
+-app.include_router(streamers.router, prefix="/streamers", tags=["streamers"])
++app.include_router(streamers.router, prefix="/streamers", tags=["streamers"])
++app.include_router(live.router, tags=["live"])
+
 diff --git a/render.yaml b/render.yaml
-index f79ce16..5084471 100644
+index 2fa3e1b..d4e0fdc 100644
 --- a/render.yaml
 +++ b/render.yaml
-@@ -16,8 +16,10 @@ services:
-         value: REPLACE_ME
-       - key: JWT_SECRET
-         generateValue: true
-+      - key: TOKEN_CRYPTO_KEY        # base64-encoded 32-byte key for Fernet
-+        value: REPLACE_ME
-       - key: NWS_USER_AGENT
--        value: Fantasy Edge (contact: you@example.com)
-+        value: "Fantasy Edge (contact: you@example.com)"
-       - key: YAHOO_CLIENT_ID
-         value: REPLACE_ME
-       - key: YAHOO_CLIENT_SECRET
-diff --git a/services/worker/.env.example b/services/worker/.env.example
-index f0dce4f..de4c547 100644
---- a/services/worker/.env.example
-+++ b/services/worker/.env.example
-@@ -1,10 +1,5 @@
- # Worker Configuration
- REDIS_URL=redis://redis:6379/0
--BROKER_URL=redis://redis:6379/0
--RESULT_BACKEND=redis://redis:6379/0
--CELERY_RESULT_EXPIRES=3600
--CELERY_TASK_SOFT_TIME_LIMIT=300
--CELERY_TASK_TIME_LIMIT=600
- DATABASE_URL=postgresql+psycopg://REPLACE_ME:REPLACE_ME@db:5432/ff
- NWS_USER_AGENT="Fantasy Edge (contact: REPLACE_ME)"
- NIGHTLY_SYNC_CRON=0 3 * * *
+@@
+       - key: YAHOO_REDIRECT_URI
+         value: https://fantasy-edge-api.onrender.com/auth/yahoo/callback
++      - key: CORS_ORIGINS
++        value: https://misfits.westfam.media
 
-diff --git a/.env.example b/.env.example
-index a9016e0..3b7f988 100644
---- a/.env.example
-+++ b/.env.example
-@@ -3,9 +3,10 @@ NEXT_PUBLIC_API_BASE=
- 
- # API
- DATABASE_URL=
--REDIS_URL=
-+# Use rediss:// for Upstash TLS; docker-compose uses redis://redis:6379/0 for local dev
-+REDIS_URL=rediss://:REPLACE_ME@HOST:PORT
- JWT_SECRET=
--NWS_USER_AGENT= "Fantasy Edge (contact: you@example.com)"
-+NWS_USER_AGENT="Fantasy Edge (contact: you@example.com)"
- # base64-encoded 32-byte key for Fernet encryption
- TOKEN_CRYPTO_KEY=
- 
-diff --git a/README.md b/README.md
-index b42f367..996ab1c 100644
---- a/README.md
-+++ b/README.md
-@@ -12,6 +12,7 @@ cp services/worker/.env.example services/worker/.env
- 
- # start Postgres, Redis, API, web, and worker
- docker compose -f infra/docker-compose.dev.yml up --build
-+# docker-compose sets REDIS_URL=redis://redis:6379/0 for local services
- ```
- 
- - API: http://localhost:8000/healthp
-@@ -21,7 +22,7 @@ docker compose -f infra/docker-compose.dev.yml up --build
- 
- ### API / Worker
- - `DATABASE_URL` — Postgres connection string
--- `REDIS_URL` — Upstash Redis connection
-+- `REDIS_URL` — Upstash Redis connection (use `rediss://` in production; `redis://redis:6379/0` for local Docker)
- - `JWT_SECRET` — signing key for session JWTs
- - `TOKEN_CRYPTO_KEY` — base64(32-byte) key for Fernet token encryption
- - `YAHOO_CLIENT_ID` / `YAHOO_CLIENT_SECRET` — Yahoo OAuth credentials
-diff --git a/apps/api/.env.example b/apps/api/.env.example
-index c31abb4..ad1d571 100644
---- a/apps/api/.env.example
-+++ b/apps/api/.env.example
-@@ -1,8 +1,9 @@
- # API Configuration
- DATABASE_URL=postgresql+psycopg://REPLACE_ME:REPLACE_ME@db:5432/ff
--REDIS_URL=redis://redis:6379/0
-+# Upstash Redis (TLS); use redis://redis:6379/0 for local dev
-+REDIS_URL=rediss://:REPLACE_ME@HOST:PORT
- JWT_SECRET=REPLACE_ME
--TOKEN_CRYPTO_KEY=REPLACE_ME
-+TOKEN_CRYPTO_KEY=REPLACE_ME  # base64-encoded 32-byte key for Fernet
- ALLOW_DEBUG_USER=false
- CORS_ORIGINS=http://localhost:3000,https://misfits.westfam.media
- 
-diff --git a/docs/FINDINGS.md b/docs/FINDINGS.md
-index 7832456..b98882c 100644
---- a/docs/FINDINGS.md
-+++ b/docs/FINDINGS.md
-@@ -1,4 +1,3 @@
- # Findings
- 
--1. **[Minor][Cache]** `apps/api/.env.example:2-3` — Sample Redis URL uses non-TLS `redis://`, but production Upstash requires `rediss://` for encrypted connections.
--2. **[Minor][Cache]** `services/worker/.env.example:2` — Worker example also uses `redis://`, which doesn't match the mandated TLS `rediss://` scheme.
-+_No outstanding findings._
-diff --git a/docs/Incorrect-or-Incomplete.md b/docs/Incorrect-or-Incomplete.md
-index d46b4da..2695a1c 100644
---- a/docs/Incorrect-or-Incomplete.md
-+++ b/docs/Incorrect-or-Incomplete.md
-@@ -1,4 +1,3 @@
- # Incorrect or Incomplete Items
- 
--* `apps/api/.env.example:2-3` — Redis URL uses `redis://`; should be `rediss://` for Upstash TLS.
--* `services/worker/.env.example:2` — Redis URL uses `redis://`; should be `rediss://`.
-+_None._
-diff --git a/docs/PR-Plan.md b/docs/PR-Plan.md
-index 1f2718f..19fb4f8 100644
---- a/docs/PR-Plan.md
-+++ b/docs/PR-Plan.md
-@@ -1,11 +1,3 @@
- # PR Plan
- 
--1. **Switch sample Redis URLs to TLS**
--   - Scope: update `apps/api/.env.example` and `services/worker/.env.example` to use `rediss://` and document the Upstash format.
--   - Test Plan: `docker compose -f infra/docker-compose.dev.yml up` to verify API and worker connect using TLS URLs.
--   - Acceptance: Environment samples reflect TLS scheme and services boot without errors.
--
--2. **Document local Redis usage**
--   - Scope: clarify in README that production uses `rediss://` while local development uses `redis://` via Docker.
--   - Test Plan: follow README setup on a fresh clone to ensure no confusion for developers.
--   - Acceptance: Developers understand when to use TLS vs non-TLS URLs.
-+No pending items.
-diff --git a/services/worker/.env.example b/services/worker/.env.example
-index de4c547..ac827dd 100644
---- a/services/worker/.env.example
-+++ b/services/worker/.env.example
-@@ -1,5 +1,6 @@
- # Worker Configuration
--REDIS_URL=redis://redis:6379/0
-+# Upstash Redis (TLS); use redis://redis:6379/0 for local dev
-+REDIS_URL=rediss://:REPLACE_ME@HOST:PORT
- DATABASE_URL=postgresql+psycopg://REPLACE_ME:REPLACE_ME@db:5432/ff
- NWS_USER_AGENT="Fantasy Edge (contact: REPLACE_ME)"
- NIGHTLY_SYNC_CRON=0 3 * * *
-
+diff --git a/apps/web/app/login/page.tsx b/apps/web/app/login/page.tsx
+index 03f14a5..41760ab 100644
+--- a/apps/web/app/login/page.tsx
++++ b/apps/web/app/login/page.tsx
+@@
+-import { API_BASE } from "../../lib/api";
++import { API_BASE } from "../../lib/api";
++import { useRouter } from "next/navigation";
+@@
+-export default function LoginPage() {
+-  const handleLogin = () => {
+-    window.location.href = `${API_BASE}/auth/yahoo/login`;
+-  };
++export default function LoginPage() {
++  const router = useRouter();
++  const handleLogin = () => {
++    router.push(`${API_BASE}/auth/yahoo/login`);
++  };
