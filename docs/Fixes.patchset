@@ -1,62 +1,14 @@
-diff --git a/apps/api/app/routers/live.py b/apps/api/app/routers/live.py
+diff --git a/apps/web/lib/live.ts b/apps/web/lib/live.ts
 new file mode 100644
-index 0000000..e69de29
+index 0000000..95f1e1f
 --- /dev/null
-+++ b/apps/api/app/routers/live.py
++++ b/apps/web/lib/live.ts
 @@
-+from fastapi import APIRouter
-+from fastapi.responses import StreamingResponse
-+import asyncio
++import { API_BASE } from "./api";
 +
-+router = APIRouter()
-+
-+
-+@router.get("/live/subscribe")
-+async def subscribe() -> StreamingResponse:
-+    async def event_stream():
-+        while True:
-+            yield "event: heartbeat\ndata: ok\n\n"
-+            await asyncio.sleep(25)
-+
-+    return StreamingResponse(event_stream(), media_type="text/event-stream")
-+
-diff --git a/apps/api/app/main.py b/apps/api/app/main.py
-index 46b7e3a..e5600c8 100644
---- a/apps/api/app/main.py
-+++ b/apps/api/app/main.py
-@@
--from .routers import health, auth, yahoo, optimize, players, waivers, streamers
-+from .routers import health, auth, yahoo, optimize, players, waivers, streamers, live
-@@
--app.include_router(streamers.router, prefix="/streamers", tags=["streamers"])
-+app.include_router(streamers.router, prefix="/streamers", tags=["streamers"])
-+app.include_router(live.router, tags=["live"])
++export function subscribeToLive(onMessage: (ev: MessageEvent) => void): () => void {
++  const es = new EventSource(`${API_BASE}/live/subscribe`);
++  es.onmessage = onMessage;
++  return () => es.close();
++}
 
-diff --git a/render.yaml b/render.yaml
-index 2fa3e1b..d4e0fdc 100644
---- a/render.yaml
-+++ b/render.yaml
-@@
-       - key: YAHOO_REDIRECT_URI
-         value: https://fantasy-edge-api.onrender.com/auth/yahoo/callback
-+      - key: CORS_ORIGINS
-+        value: https://misfits.westfam.media
-
-diff --git a/apps/web/app/login/page.tsx b/apps/web/app/login/page.tsx
-index 03f14a5..41760ab 100644
---- a/apps/web/app/login/page.tsx
-+++ b/apps/web/app/login/page.tsx
-@@
--import { API_BASE } from "../../lib/api";
-+import { API_BASE } from "../../lib/api";
-+import { useRouter } from "next/navigation";
-@@
--export default function LoginPage() {
--  const handleLogin = () => {
--    window.location.href = `${API_BASE}/auth/yahoo/login`;
--  };
-+export default function LoginPage() {
-+  const router = useRouter();
-+  const handleLogin = () => {
-+    router.push(`${API_BASE}/auth/yahoo/login`);
-+  };
