@@ -1,10 +1,12 @@
 "use client";
 
 import { API_BASE } from "../../lib/api";
+import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
+  const router = useRouter();
   const handleLogin = () => {
-    window.location.href = `${API_BASE}/auth/yahoo/login`;
+    router.push(`${API_BASE}/auth/yahoo/login`);
   };
 
   return (

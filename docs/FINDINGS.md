@@ -1,4 +1,3 @@
 # Findings
 
-
-_No outstanding findings._
+_No outstanding issues._

@@ -26,3 +26,5 @@ services:
         value: REPLACE_ME
       - key: YAHOO_REDIRECT_URI
         value: https://fantasy-edge-api.onrender.com/auth/yahoo/callback
+      - key: CORS_ORIGINS
+        value: https://misfits.westfam.media

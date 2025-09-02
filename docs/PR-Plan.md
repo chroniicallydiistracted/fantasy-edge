@@ -1,3 +1,3 @@
 # PR Plan
 
-No pending items.
+_No additional PRs planned._
