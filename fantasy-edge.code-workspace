@@ -21,6 +21,8 @@
     },
     "Codegeex.Chat.fontSize": 11,
     "Codegeex.CompletionDelay": 0.4,
-    "Codegeex.Chat.LanguagePreference": "English"
+    "Codegeex.Chat.LanguagePreference": "English",
+    "Codegeex.EnableExtension": true,
+    "Codegeex.RepoIndex": true
   }
 }
