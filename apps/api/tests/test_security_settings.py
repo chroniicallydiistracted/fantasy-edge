@@ -23,5 +23,5 @@ def test_cookie_dev(monkeypatch):
 
 
 def test_cors_defaults():
-    assert "http://localhost:3000" in settings.cors_origins
-    assert "https://misfits.westfam.media" in settings.cors_origins
+    assert "http://localhost:3000" in settings.cors_origins_list
+    assert "https://misfits.westfam.media" in settings.cors_origins_list

@@ -30,6 +30,7 @@ docker compose -f infra/docker-compose.dev.yml up --build
 - `ALLOW_DEBUG_USER` — enable `X-Debug-User` bypass (`true|false`)
 - `NWS_USER_AGENT` — contact string for api.weather.gov
 - `CORS_ORIGINS` — comma-separated origins (optional)
+- `LIVE_POLL_INTERVAL` — milliseconds between polling for game data (default: 8000)
 
 ### Web
 - `NEXT_PUBLIC_API_BASE` — API base URL used by the frontend

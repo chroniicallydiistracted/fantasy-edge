@@ -25,6 +25,8 @@ services:
       - key: YAHOO_CLIENT_SECRET
         value: REPLACE_ME
       - key: YAHOO_REDIRECT_URI
-        value: https://fantasy-edge-api.onrender.com/auth/yahoo/callback
+        value: https://api.misfits.westfam.media/auth/yahoo/callback
       - key: CORS_ORIGINS
         value: https://misfits.westfam.media
+      - key: LIVE_POLL_INTERVAL
+        value: 8000
