@@ -1,4 +1,3 @@
 # Incorrect or Incomplete Items
 
-
-_None._
+* `apps/web` — Missing SSE client to handle `/live/subscribe` events; live data cannot be received.

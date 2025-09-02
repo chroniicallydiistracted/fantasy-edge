@@ -15,7 +15,9 @@ from celery_app import celery  # type: ignore
 
 # Make app models importable when running from this directory
 sys.path.append(str(Path(__file__).resolve().parents[2] / "apps/api"))
+sys.path.append(str(Path(__file__).resolve().parents[2] / "packages/projections"))
 sys.path.append(str(Path(__file__).resolve().parents[2] / "packages"))
+sys.path.append(str(Path(__file__).resolve().parents[2] / "packages/scoring"))
 from app.models import (  # type: ignore  # noqa: E402
     Injury,
     League,
