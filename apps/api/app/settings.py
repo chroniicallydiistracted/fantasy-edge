@@ -12,6 +12,7 @@ class Settings(BaseSettings):
     cors_origins: str = ""  # Comma-separated origins from env var
     nws_user_agent: str = "Fantasy Edge (contact: you@example.com)"
     live_poll_interval: int = 8000  # milliseconds between polling for game data
+    live_provider: str = "yahoo"  # Live data provider
 
     @property
     def cors_origins_list(self) -> list[str]:

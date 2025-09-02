@@ -2,12 +2,13 @@ services:
   - type: web
     name: fantasy-edge-api
     env: python
-    plan: free
+    region: oregon
     rootDir: apps/api
-    buildCommand: pip install -r requirements.txt
-    startCommand: bash bin/prestart.sh
+    buildCommand: |
+      pip install -U pip
+      pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port 10000
     healthCheckPath: /health
-    autoDeploy: true
     envVars:
       - key: DATABASE_URL
         sync: false
@@ -18,7 +19,7 @@ services:
       - key: YAHOO_CLIENT_SECRET
         sync: false
       - key: YAHOO_REDIRECT_URI
-        sync: false
+        value: https://api.misfits.westfam.media/auth/yahoo/callback
       - key: JWT_SECRET
         sync: false
       - key: TOKEN_CRYPTO_KEY

@@ -18,6 +18,7 @@
       "**/__pycache__": true,
       "**/.next": true,
       "**/node_modules": true
-    }
+    },
+    "Codegeex.Chat.fontSize": 11
   }
 }

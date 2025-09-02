@@ -1,3 +1,4 @@
+# infra/docker-compose.dev.yml
 services:
   db:
     image: postgres:15
@@ -6,35 +7,63 @@ services:
       POSTGRES_PASSWORD: ff
       POSTGRES_DB: ff
     ports: ["5432:5432"]
+
   redis:
     image: redis:7
     ports: ["6379:6379"]
+
   api:
-    build: ../apps/api
-    env_file: ../.env
+    build:
+      context: ../apps/api
+      dockerfile: Dockerfile.dev   # see note below
+    working_dir: /app
+    env_file: ../.env.dev
     environment:
       DATABASE_URL: postgresql+psycopg://ff:ff@db:5432/ff
       REDIS_URL: redis://redis:6379/0
+      CORS_ORIGINS: http://localhost:3000
+    volumes:
+      - ../apps/api:/app
+      - api_venv:/app/.venv
+      - api_pip_cache:/root/.cache/pip
     ports: ["8000:8000"]
     depends_on: [db, redis]
     command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+
   worker:
-    build: ../services/worker
-    env_file: ../.env
+    build:
+      context: ../services/worker
+      dockerfile: Dockerfile.dev   # mirror api’s pattern
+    working_dir: /app
+    env_file: ../.env.dev
     environment:
-      REDIS_URL: redis://redis:6379/0
       DATABASE_URL: postgresql+psycopg://ff:ff@db:5432/ff
-    ports: ["8001:8001"]
-    depends_on: [redis]
+      REDIS_URL: redis://redis:6379/0
+    depends_on: [db, redis]
     command: python tasks.py
     volumes:
+      - ../services/worker:/app
       - data:/data
+      - api_pip_cache:/root/.cache/pip
+    # no need to expose a port unless it serves HTTP
+
   web:
-    build: ../apps/web
+    build:
+      context: ../apps/web
+      dockerfile: Dockerfile.dev
+    working_dir: /app
     environment:
-      NEXT_PUBLIC_API_BASE: http://localhost:8000
+      NEXT_PUBLIC_API_BASE: http://localhost:8000   # browser → host
+      API_BASE: http://api:8000                     # server → api service
+    volumes:
+      - ../apps/web:/app
+      - web_node_modules:/app/node_modules
     ports: ["3000:3000"]
-    command: npm run dev
+    depends_on: [api]
+    command: sh -lc "npm ci && npm run dev"
 
 volumes:
+  web_node_modules:
+  api_venv:
+  api_pip_cache:
   data:
