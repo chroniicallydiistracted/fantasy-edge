@@ -1,5 +1,20 @@
 set -euo pipefail
-export PYTHONPATH="$PYTHONPATH:$(cd "$(dirname "$0")/.." && pwd)"
+
+# Resolve to apps/api directory no matter where we’re invoked from
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+APP_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+cd "$APP_DIR"
+
+# Safely extend PYTHONPATH even if it’s currently unset
+export PYTHONPATH="${PYTHONPATH:+${PYTHONPATH}:}$APP_DIR"
+
+# Required envs (fail fast with a clear message)
+: "${DATABASE_URL:?DATABASE_URL is required (use postgresql+psycopg://...)}"
+: "${PORT:=8000}"
+
 echo "[prestart] PYTHONPATH=$PYTHONPATH"
+echo "[prestart] Running Alembic migrations..."
 alembic upgrade head
-exec uvicorn app.main:app --host 0.0.0.0 --port "${PORT:-8000}"
+
+echo "[prestart] Starting Uvicorn..."
+exec uvicorn app.main:app --host 0.0.0.0 --port "$PORT"
