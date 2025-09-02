@@ -20,9 +20,16 @@
       "**/node_modules": true
     },
     "Codegeex.Chat.fontSize": 11,
-    "Codegeex.CompletionDelay": 0.4,
+    "Codegeex.CompletionDelay": 0.3,
     "Codegeex.Chat.LanguagePreference": "English",
     "Codegeex.EnableExtension": true,
-    "Codegeex.RepoIndex": true
+    "Codegeex.RepoIndex": true,
+    "Codegeex.Comment.LanguagePreference": "English",
+    "Codegeex.SidebarUI.LanguagePreference": "English",
+    "Codegeex.CandidateNum": "2 (medium)",
+    "Codegeex.CompletionModel": "CodeGeeX Pro[Beta]",
+    "Codegeex.CommitMessage.LanguagePreference": "English",
+    "ligaturesLimited.compactScopeDisplay": false,
+    "editor.fontLigatures": true
   }
 }

@@ -13,6 +13,20 @@ export PYTHONPATH="${PYTHONPATH:+${PYTHONPATH}:}$APP_DIR"
 : "${PORT:=8000}"
 
 echo "[prestart] PYTHONPATH=$PYTHONPATH"
+
+python - <<'PY'
+import os, re, urllib.parse, socket
+u = os.environ.get("DATABASE_URL","")
+print("[prestart] DATABASE_URL =", re.sub(r':[^:@]*@', ':***@', u))
+host = urllib.parse.urlparse(u).hostname
+print("[prestart] HOST repr   =", repr(host))
+try:
+    ai = socket.getaddrinfo(host, 5432)[:1]
+    print("[prestart] DNS        =", ai)
+except Exception as e:
+    print("[prestart] DNS_ERR    =", repr(e))
+PY
+
 echo "[prestart] Running Alembic migrations..."
 alembic upgrade head
 
