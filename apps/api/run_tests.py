@@ -1,12 +1,10 @@
 #!/usr/bin/env python3
 import os
 import sys
-import unittest
 
 # Add the current directory to the Python path
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-# Import the test modules
 from tests.test_db import test_db_connects
 from tests.test_models import test_user_crud
 

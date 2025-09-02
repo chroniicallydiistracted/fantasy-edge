@@ -6840,3 +6840,108 @@ index f38777b..d93042d 100644
  from projections import project_offense  # type: ignore  # noqa: E402
  from sqlalchemy.exc import SQLAlchemyError
  
+diff --git a/apps/api/alembic/env_new.py b/apps/api/alembic/env_new.py
+index c5c5c9c..ee21036 100644
+--- a/apps/api/alembic/env_new.py
++++ b/apps/api/alembic/env_new.py
+@@ -3,6 +3,7 @@ from logging.config import fileConfig
+ import os
+ from sqlalchemy import engine_from_config, pool
+ from alembic import context
++from app.models import Base  # target metadata
+ 
+ config = context.config
+ if config.config_file_name is not None:
+@@ -13,8 +14,6 @@ db_url = os.environ.get("DATABASE_URL")
+ if db_url:
+     config.set_main_option("sqlalchemy.url", db_url)
+-
+-from app.models import Base  # target metadata
+-
++ 
+ def run_migrations_offline() -> None:
+     url = config.get_main_option("sqlalchemy.url")
+     context.configure(url=url, target_metadata=Base.metadata, literal_binds=True, compare_type=True)
+
+diff --git a/apps/api/app/deps.py b/apps/api/app/deps.py
+index 5bafd23..3e5b9af 100644
+--- a/apps/api/app/deps.py
++++ b/apps/api/app/deps.py
+@@ -2,7 +2,6 @@ from fastapi import Cookie, Depends, HTTPException, Header, status
+ from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+ from sqlalchemy import create_engine
+ from sqlalchemy.orm import Session, sessionmaker
+-from sqlalchemy import text
+ from jose import JWTError, jwt
+ from typing import Optional
+ from .models import User
+
+diff --git a/apps/api/app/models.py b/apps/api/app/models.py
+index 7175fc4..dc6c221 100644
+--- a/apps/api/app/models.py
++++ b/apps/api/app/models.py
+@@ -1,5 +1,4 @@
+ # apps/api/app/models.py
+-from datetime import datetime
+ from sqlalchemy import (
+     Column, Integer, String, DateTime, ForeignKey, Text, Boolean, Float, JSON,
+     UniqueConstraint, Index, func
+ )
+
+diff --git a/apps/api/app/routers/live.py b/apps/api/app/routers/live.py
+index 84918da..19554d9 100644
+--- a/apps/api/app/routers/live.py
++++ b/apps/api/app/routers/live.py
+@@ -1,12 +1,7 @@
+ from fastapi import APIRouter, Query, Depends
+ from fastapi.responses import StreamingResponse
+ import asyncio
+-import json
+-from typing import Optional
+ from ..deps import get_current_user
+-from ..session import SessionLocal
+-from ..models import League
+-from ..yahoo_client import YahooClient
+ 
+ router = APIRouter()
+@@ -19,9 +14,6 @@ async def subscribe(
+ ) -> StreamingResponse:
+     async def event_stream():
+         # Redis pub/sub channel for this league/week
+-        channel = f"live:{league_key}:w{week}"
+-
+-        # Connect to Redis pub/sub
+         redis_conn = None
+         try:
+             # For now, we'll use the settings.redis_url
+
+diff --git a/apps/api/run_tests.py b/apps/api/run_tests.py
+index 8bd9107..127c78c 100644
+--- a/apps/api/run_tests.py
++++ b/apps/api/run_tests.py
+@@ -1,12 +1,10 @@
+ #!/usr/bin/env python3
+ import os
+ import sys
+-import unittest
+ 
+ # Add the current directory to the Python path
+ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+ 
+-# Import the test modules
+ from tests.test_db import test_db_connects
+ from tests.test_models import test_user_crud
+ 
+diff --git a/apps/api/tests/test_models.py b/apps/api/tests/test_models.py
+index b3a3f03..26731b8 100644
+--- a/apps/api/tests/test_models.py
++++ b/apps/api/tests/test_models.py
+@@ -4,5 +4,7 @@ from app.models import User
+ def test_user_crud():
+     with SessionLocal() as s:
+         u = User(email="test@example.com")
+-        s.add(u); s.commit(); s.refresh(u)
++        s.add(u)
++        s.commit()
++        s.refresh(u)
+         assert u.id is not None

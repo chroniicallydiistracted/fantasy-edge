@@ -2,7 +2,6 @@ from fastapi import Cookie, Depends, HTTPException, Header, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session, sessionmaker
-from sqlalchemy import text
 from jose import JWTError, jwt
 from typing import Optional
 from .models import User
