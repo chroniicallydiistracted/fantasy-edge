@@ -1,0 +1,23 @@
+{
+  "folders": [
+    { "path": "." },
+    { "path": "apps/web" },
+    { "path": "apps/api" }
+  ],
+  "settings": {
+    "editor.formatOnSave": true,
+    "files.eol": "\n",
+    "typescript.tsdk": "apps/web/node_modules/typescript/lib",
+    "python.analysis.typeCheckingMode": "basic",
+    "python.defaultInterpreterPath": "apps/api/.venv/bin/python",
+    "eslint.workingDirectories": [
+      { "directory": "apps/web", "changeProcessCWD": true }
+    ],
+    "files.exclude": {
+      "**/.venv": true,
+      "**/__pycache__": true,
+      "**/.next": true,
+      "**/node_modules": true
+    }
+  }
+}
