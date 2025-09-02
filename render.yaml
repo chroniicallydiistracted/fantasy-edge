@@ -1,33 +1,29 @@
-# render.yaml (root of repo)
 services:
   - type: web
     name: fantasy-edge-api
-    rootDir: apps/api
     env: python
-    region: oregon         # US-East; choose "oregon" or "frankfurt" if closer to you
+    plan: free
+    rootDir: apps/api
     buildCommand: pip install -r requirements.txt
     preDeployCommand: alembic upgrade head
     startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
-    autoDeploy: true
     healthCheckPath: /health
+    autoDeploy: true
     envVars:
-      - key: DATABASE_URL            # Neon Postgres (serverless)
-        value: REPLACE_ME
-      - key: REDIS_URL               # Upstash (TLS URL rediss://...)
-        value: REPLACE_ME
-      - key: JWT_SECRET
-        generateValue: true
-      - key: TOKEN_CRYPTO_KEY        # base64-encoded 32-byte key for Fernet
-        value: REPLACE_ME
-      - key: NWS_USER_AGENT
-        value: "Fantasy Edge (contact: you@example.com)"
+      - key: DATABASE_URL         # Neon (psycopg v3)
+        sync: false
+      - key: REDIS_URL            # Upstash
+        sync: false
       - key: YAHOO_CLIENT_ID
-        value: REPLACE_ME
+        sync: false
       - key: YAHOO_CLIENT_SECRET
-        value: REPLACE_ME
+        sync: false
       - key: YAHOO_REDIRECT_URI
-        value: https://api.misfits.westfam.media/auth/yahoo/callback
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: TOKEN_CRYPTO_KEY
+        sync: false
       - key: CORS_ORIGINS
         value: https://misfits.westfam.media
-      - key: LIVE_POLL_INTERVAL
-        value: 8000
+
