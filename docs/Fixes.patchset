@@ -11,3 +11,4 @@ index 0000000..95f1e1f
 +  es.onmessage = onMessage;
 +  return () => es.close();
 +}
+
