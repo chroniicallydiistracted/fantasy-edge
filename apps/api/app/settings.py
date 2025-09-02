@@ -9,24 +9,28 @@ class Settings(BaseSettings):
     jwt_secret: str = "REPLACE_ME"
     token_crypto_key: str = "REPLACE_ME"  # base64-encoded 32-byte key for Fernet encryption
     allow_debug_user: bool = False  # Enable debug bypass header
-    cors_origins: list[str] = []  # Will be populated from env var
-    
+    cors_origins: str = ""  # Comma-separated origins from env var
+    nws_user_agent: str = "Fantasy Edge (contact: you@example.com)"
+    live_poll_interval: int = 8000  # milliseconds between polling for game data
+
     @property
     def cors_origins_list(self) -> list[str]:
         """Get CORS origins with localhost for development if not in production"""
         origins = []
-        
-        # Add production origin
-        if "misfits.westfam.media" in str(self.cors_origins):
+
+        # Parse comma-separated origins from env var
+        if self.cors_origins:
             origins = [origin.strip() for origin in str(self.cors_origins).split(",") if origin.strip()]
-        
-        # Add localhost for development if not already present
+
+        # Add localhost for development if not already present and debug mode is enabled
         if self.allow_debug_user and "localhost:3000" not in origins:
             origins.append("http://localhost:3000")
-            
+
+        # Ensure we have at least one origin for security
+        if not origins:
+            origins = ["http://localhost:3000"] if self.allow_debug_user else []
+
         return origins
-    nws_user_agent: str = "Fantasy Edge (contact: you@example.com)"
-    live_poll_interval: int = 8000  # milliseconds between polling for game data
 
     model_config = SettingsConfigDict(env_file=".env")
 
