@@ -8,4 +8,7 @@
 6. **[Fixed][Auth]** `apps/api/tests/conftest.py` now overrides `REDIS_URL` to ensure tests never hit a live Redis instance.
 7. **[Fixed][Auth]** `apps/api/app/settings.py` now provides safe defaults for required environment variables, allowing tests and static analysis without external configuration.
 8. **[Fixed][Web]** Added root `package.json` and `pnpm-workspace.yaml` so `pnpm lint` and `pnpm build` run from the repository root.
-9. **[Known][CI]** `mypy` still fails for the API (`apps/api/app`) due to missing env defaults and legacy SQLAlchemy base classes; worker type checks now pass after adding stub ignores.
+9. **[Fixed][API]** `apps/api/app/models.py` now defines ORM attributes with SQLAlchemy 2.0 `Mapped`/`mapped_column`, eliminating `Column[...]` typing issues.
+10. **[Fixed][API]** `apps/api/app/settings.py` now injects environment defaults explicitly, removing mypy `call-arg` warnings.
+11. **[Fixed][CI]** Installed `types-python-jose` to satisfy missing stub errors for `jose` imports.
+12. **[Known][CI]** `mypy` still reports type errors in session management and OAuth helpers.

@@ -16,6 +16,7 @@ ortools>=9.10
 cryptography>=43.0
 alembic>=1.12
 python-jose[cryptography]>=3.3
+types-python-jose>=3.3
 passlib[bcrypt]>=1.7.4
 httpx>=0.28
 respx>=0.20
