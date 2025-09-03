@@ -4,6 +4,7 @@ import base64
 import hashlib
 import json
 from datetime import datetime, timedelta, UTC
+from typing import Any
 
 import httpx
 from fastapi import APIRouter, Depends, HTTPException, Request
@@ -228,8 +229,10 @@ def yahoo_callback(
     redis.setex(f"session:{session_id}", settings.session_ttl_seconds, json.dumps(session_data))
 
     # Set session cookie and redirect users to the leagues page
-    response = RedirectResponse(f"{settings.web_base_url}/leagues", status_code=302)
-    response.set_cookie(
+    redirect: RedirectResponse = RedirectResponse(
+        f"{settings.web_base_url}/leagues", status_code=302
+    )
+    redirect.set_cookie(
         key=SessionManager.COOKIE_NAME,
         value=session_id,
         path="/",
@@ -239,7 +242,7 @@ def yahoo_callback(
         max_age=settings.session_ttl_seconds,
     )
 
-    return response
+    return redirect
 
 
 @router.get("/me")
@@ -252,16 +255,16 @@ def get_me(
     if not session_id:
         return {"ok": False, "error": "No session cookie"}
 
-    session_data = redis.get(f"session:{session_id}")
-    if not session_data:
+    session_raw: Any = redis.get(f"session:{session_id}")
+    if not session_raw:
         return {"ok": False, "error": "Session not found"}
 
     try:
         # redis returns bytes; decode to str for json.loads
-        if isinstance(session_data, (bytes, bytearray)):
-            session_text = session_data.decode()
+        if isinstance(session_raw, (bytes, bytearray)):
+            session_text = session_raw.decode()
         else:
-            session_text = session_data
+            session_text = str(session_raw)
         session_info = json.loads(session_text)
         return {"ok": True, "session": session_info}
     except Exception:

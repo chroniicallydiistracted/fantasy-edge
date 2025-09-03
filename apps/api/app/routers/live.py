@@ -1,9 +1,15 @@
-from fastapi import APIRouter, Query, Depends
-from fastapi.responses import StreamingResponse
 import asyncio
-from redis.asyncio import Redis
 import contextlib
+from collections.abc import AsyncGenerator
+from typing import Any
+
+from fastapi import APIRouter, Depends, Query
+from fastapi.responses import StreamingResponse
+from redis.asyncio import Redis
+from redis.asyncio.client import PubSub
+
 from ..deps import get_current_user
+from ..models import User
 from ..settings import settings
 
 router = APIRouter()
@@ -13,12 +19,12 @@ router = APIRouter()
 async def subscribe(
     league_key: str = Query(..., alias="league_key"),
     week: int = Query(..., alias="week"),
-    user=Depends(get_current_user),
+    user: User = Depends(get_current_user),
 ) -> StreamingResponse:
-    async def event_stream():
+    async def event_stream() -> AsyncGenerator[str, None]:
         channel = f"live:{league_key}:w{week}"
         redis: Redis | None = None
-        pubsub = None
+        pubsub: PubSub | None = None
         try:
             try:
                 redis = Redis.from_url(settings.redis_url, decode_responses=True)
@@ -39,7 +45,9 @@ async def subscribe(
             pubsub = redis.pubsub()
             await pubsub.subscribe(channel)
             while True:
-                message = await pubsub.get_message(ignore_subscribe_messages=True, timeout=25)
+                message: dict[str, Any] | None = await pubsub.get_message(
+                    ignore_subscribe_messages=True, timeout=25
+                )
                 if message and message.get("data"):
                     yield f"data: {message['data']}\n\n"
                 else:

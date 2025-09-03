@@ -1,4 +1,5 @@
 from pathlib import Path
+import os
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from pydantic import Field, field_validator
 from cryptography.fernet import Fernet
@@ -55,5 +56,33 @@ class Settings(BaseSettings):
         return v
 
 
-# Instantiate; static checkers can’t see env injection, so ignore the warning here.
-settings = Settings()  # pyright: ignore[reportCallIssue]  # type: ignore
+# Instantiate with explicit named arguments so static type checkers see required fields.
+settings = Settings(
+    DATABASE_URL=os.getenv("DATABASE_URL", "sqlite://"),
+    REDIS_URL=os.getenv("REDIS_URL", "redis://localhost:6379/0"),
+    YAHOO_CLIENT_ID=os.getenv("YAHOO_CLIENT_ID", "test-client"),
+    YAHOO_CLIENT_SECRET=os.getenv("YAHOO_CLIENT_SECRET", "test-secret"),
+    JWT_SECRET=os.getenv("JWT_SECRET", "test-jwt-secret"),
+    TOKEN_CRYPTO_KEY=os.getenv(
+        "TOKEN_CRYPTO_KEY",
+        "MDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDA=",
+    ),
+    YAHOO_REDIRECT_URI=os.getenv(
+        "YAHOO_REDIRECT_URI",
+        "https://api.misfits.westfam.media/auth/yahoo/callback",
+    ),
+    WEB_BASE_URL=os.getenv("WEB_BASE_URL", "https://misfits.westfam.media"),
+    ALLOW_DEBUG_USER=os.getenv("ALLOW_DEBUG_USER", "false") in {"1", "true", "True"},
+    CORS_ORIGINS=os.getenv(
+        "CORS_ORIGINS",
+        "http://localhost:3000,https://misfits.westfam.media",
+    ),
+    NWS_USER_AGENT=os.getenv(
+        "NWS_USER_AGENT",
+        "Fantasy Edge (contact: chroniicallydiistracted@gmail.com)",
+    ),
+    LIVE_POLL_INTERVAL=int(os.getenv("LIVE_POLL_INTERVAL", "8000")),
+    LIVE_PROVIDER=os.getenv("LIVE_PROVIDER", "yahoo"),
+    SESSION_COOKIE_NAME=os.getenv("SESSION_COOKIE_NAME", "fe_session"),
+    SESSION_TTL_SECONDS=int(os.getenv("SESSION_TTL_SECONDS", "2592000")),
+)
