@@ -18,19 +18,24 @@ sys.path.append(str(Path(__file__).resolve().parents[2] / "apps/api"))
 sys.path.append(str(Path(__file__).resolve().parents[2] / "packages/projections"))
 sys.path.append(str(Path(__file__).resolve().parents[2] / "packages"))
 sys.path.append(str(Path(__file__).resolve().parents[2] / "packages/scoring"))
+
+class MissingModelStub:
+    def __init__(self, name):
+        raise ImportError(f"Model '{name}' could not be imported. This stub was used instead.")
+
 try:  # type: ignore  # noqa: E402
     from app.models import League, Player, Projection, Weather  # type: ignore
 except Exception:  # pragma: no cover - optional models
-    League = None
-    Player = None
-    Projection = None
-    Weather = None
+    League = MissingModelStub("League")
+    Player = MissingModelStub("Player")
+    Projection = MissingModelStub("Projection")
+    Weather = MissingModelStub("Weather")
 
 try:  # type: ignore  # noqa: E402
     from app.models import Injury, PlayerLink  # type: ignore
 except Exception:  # pragma: no cover - optional models
-    Injury = None
-    PlayerLink = None
+    Injury = MissingModelStub("Injury")
+    PlayerLink = MissingModelStub("PlayerLink")
 from app.waiver_service import compute_waiver_shortlist  # type: ignore  # noqa: E402
 from projections import project_offense  # type: ignore  # noqa: E402
 from sqlalchemy.exc import SQLAlchemyError
