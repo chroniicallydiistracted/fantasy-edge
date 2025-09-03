@@ -47,7 +47,7 @@ def yahoo_callback(
     token_data = client.exchange_code(code)
     access_token = token_data["access_token"]
     refresh_token = token_data.get("refresh_token")
-    expires_in = token_data.get("expires_in", 0)
+    expires_in = int(token_data.get("expires_in", 0))
     guid = token_data.get("xoauth_yahoo_guid")
     scope = token_data.get("scope")
     email = None

@@ -11,4 +11,6 @@
 9. **[Fixed][API]** `apps/api/app/models.py` now defines ORM attributes with SQLAlchemy 2.0 `Mapped`/`mapped_column`, eliminating `Column[...]` typing issues.
 10. **[Fixed][API]** `apps/api/app/settings.py` now injects environment defaults explicitly, removing mypy `call-arg` warnings.
 11. **[Fixed][CI]** Installed `types-python-jose` to satisfy missing stub errors for `jose` imports.
-12. **[Known][CI]** `mypy` still reports type errors in session management and OAuth helpers.
+12. **[Fixed][API]** Session utilities, OAuth refresh logic, and migration scripts now use precise types and cookie casing.
+13. **[Fixed][CI]** `mypy apps/api` runs clean with no remaining errors.
+
