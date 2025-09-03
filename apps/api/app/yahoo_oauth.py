@@ -69,6 +69,8 @@ class YahooOAuthClient:
             if expires.tzinfo is None:
                 expires = expires.replace(tzinfo=UTC)
             if expires - datetime.now(UTC) < timedelta(minutes=5):
+                if token.refresh_token is None:
+                    raise ValueError("No refresh token available")
                 data = self.refresh_token(self.encryption.decrypt(token.refresh_token))
                 token.access_token = self.encryption.encrypt(data["access_token"])
                 if data.get("refresh_token"):
