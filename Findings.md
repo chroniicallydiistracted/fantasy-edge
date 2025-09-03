@@ -8,4 +8,4 @@
 6. **[Fixed][Auth]** `apps/api/tests/conftest.py` now overrides `REDIS_URL` to ensure tests never hit a live Redis instance.
 7. **[Fixed][Auth]** `apps/api/app/settings.py` now provides safe defaults for required environment variables, allowing tests and static analysis without external configuration.
 8. **[Fixed][Web]** Added root `package.json` and `pnpm-workspace.yaml` so `pnpm lint` and `pnpm build` run from the repository root.
-9. **[Known][CI]** `mypy` hangs for both API and worker modules; SQLAlchemy and Celery typings need configuration.
+9. **[Known][CI]** `mypy` still fails for the API (`apps/api/app`) due to missing env defaults and legacy SQLAlchemy base classes; worker type checks now pass after adding stub ignores.

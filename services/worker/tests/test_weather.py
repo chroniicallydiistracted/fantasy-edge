@@ -1,4 +1,4 @@
-import requests
+import requests  # type: ignore[import-untyped]
 
 from tasks import compute_waf, update_weather
 

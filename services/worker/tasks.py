@@ -19,6 +19,7 @@ sys.path.append(str(Path(__file__).resolve().parents[2] / "packages/projections"
 sys.path.append(str(Path(__file__).resolve().parents[2] / "packages"))
 sys.path.append(str(Path(__file__).resolve().parents[2] / "packages/scoring"))
 
+
 try:  # type: ignore  # noqa: E402
     from app.models import League, Player, Projection, Weather  # type: ignore
 except Exception:  # pragma: no cover - optional models

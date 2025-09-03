@@ -56,4 +56,4 @@ class Settings(BaseSettings):
 
 
 # Instantiate; static checkers can’t see env injection, so ignore the warning here.
-settings = Settings()  # pyright: ignore[reportCallIssue]
+settings = Settings()  # pyright: ignore[reportCallIssue]  # type: ignore

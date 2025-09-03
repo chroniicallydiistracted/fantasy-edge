@@ -2,7 +2,7 @@ from datetime import timedelta
 import os
 
 from celery import Celery  # type: ignore
-from celery.schedules import crontab
+from celery.schedules import crontab  # type: ignore[import-untyped]
 
 BROKER = os.getenv("REDIS_URL", "rediss://redis:6379/0")
 BACKEND = BROKER
