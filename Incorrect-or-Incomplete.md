@@ -1,4 +1,3 @@
 # Incorrect or Incomplete Items
 
-- `apps/api/app/models.py:1-80` — uses legacy `declarative_base` without SQLAlchemy 2.0 `DeclarativeBase`/`Mapped` types, causing `mypy` to hang.
-
+- `apps/api/app/routers/live.py` — functions remain untyped and are skipped by mypy (`--check-untyped-defs`).
