@@ -17,5 +17,9 @@
    - Tests: `pnpm lint`, `pnpm build`.
 
 5. **PR-5: Test isolation**
-   - Mock Redis in OAuth tests to avoid external connections and stabilize CI.
-   - Tests: `pytest tests/test_oauth.py`.
+
+ - Mock Redis in OAuth tests to avoid external connections and stabilize CI.
+  - Tests: `pytest tests/test_oauth.py`.
+6. **PR-6: Type-checking stability**
+   - Adopt SQLAlchemy 2.0 typing (`DeclarativeBase`, `Mapped`) and configure mypy to ignore missing Celery stubs.
+   - Tests: `mypy apps/api/app`, `mypy services/worker`.
