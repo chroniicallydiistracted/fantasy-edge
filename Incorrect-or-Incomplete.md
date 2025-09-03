@@ -1,4 +1,5 @@
 # Incorrect or Incomplete Items
 
-- `apps/api/app/models.py:1-80` — uses legacy `declarative_base` without SQLAlchemy 2.0 `DeclarativeBase`/`Mapped` types, causing `mypy` to hang.
+- `apps/api/app/settings.py` — instantiating `Settings` without required named arguments triggers mypy `call-arg` errors.
+- `apps/api` — missing type stubs for `python-jose` and other modules keep `mypy` from passing project-wide.
 
