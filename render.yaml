@@ -7,7 +7,8 @@ services:
     buildCommand: |
       pip install -U pip
       pip install -r requirements.txt
-    startCommand: uvicorn app.main:app --host 0.0.0.0 --port 10000
+    # Run your prestart (does checks, alembic, then execs uvicorn)
+    startCommand: bash bin/prestart.sh
     healthCheckPath: /health
     envVars:
       - key: DATABASE_URL
@@ -26,3 +27,10 @@ services:
         sync: false
       - key: CORS_ORIGINS
         value: https://misfits.westfam.media
+      # optional but nice to be explicit:
+      - key: WEB_BASE_URL
+        value: https://misfits.westfam.media
+      - key: SESSION_COOKIE_NAME
+        value: fe_session
+      - key: SESSION_TTL_SECONDS
+        value: 2592000
