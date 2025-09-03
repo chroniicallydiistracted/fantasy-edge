@@ -1,65 +1,54 @@
-# app/settings.py
+from pathlib import Path
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from pydantic import Field, field_validator
 from cryptography.fernet import Fernet
 
+# Load .env from apps/api/.env (adjust if yours is elsewhere)
+ENV_FILE = Path(__file__).resolve().parent / ".env"
+
 
 class Settings(BaseSettings):
-    # Load from env (and .env if present). Ignore unknown envs to avoid "extra" errors.
     model_config = SettingsConfigDict(
-        env_file=".env", case_sensitive=False, extra="ignore"
+        env_file=str(ENV_FILE),
+        case_sensitive=False,
     )
 
-    # --- Required secrets / URLs (fail fast if missing) ---
-    token_crypto_key: str = Field(
-        ..., alias="TOKEN_CRYPTO_KEY"
-    )  # Fernet 32-byte urlsafe base64
-    database_url: str = Field(
-        ..., alias="DATABASE_URL"
-    )  # e.g. postgresql+psycopg://...
-    redis_url: str = Field(..., alias="REDIS_URL")  # e.g. rediss://:<pwd>@host:6380/0
+    # --- required (no defaults) ---
+    database_url: str = Field(..., alias="DATABASE_URL")
+    redis_url: str = Field(..., alias="REDIS_URL")
     yahoo_client_id: str = Field(..., alias="YAHOO_CLIENT_ID")
     yahoo_client_secret: str = Field(..., alias="YAHOO_CLIENT_SECRET")
-    yahoo_redirect_uri: str = Field(..., alias="YAHOO_REDIRECT_URI")
-    web_base_url: str = Field(
-        ..., alias="WEB_BASE_URL"
-    )  # e.g. https://misfits.westfam.media
     jwt_secret: str = Field(..., alias="JWT_SECRET")
+    token_crypto_key: str = Field(..., alias="TOKEN_CRYPTO_KEY")
 
-    # --- App behavior (sane defaults, override via env) ---
+    # --- non-secrets with defaults (quiet editor) ---
+    yahoo_redirect_uri: str = Field(
+        "https://api.misfits.westfam.media/auth/yahoo/callback",
+        alias="YAHOO_REDIRECT_URI",
+    )
+    web_base_url: str = Field("https://misfits.westfam.media", alias="WEB_BASE_URL")
     allow_debug_user: bool = Field(False, alias="ALLOW_DEBUG_USER")
-    cors_origins: str = Field("", alias="CORS_ORIGINS")  # comma-separated list
+    cors_origins: str = Field("", alias="CORS_ORIGINS")
     nws_user_agent: str = Field(
         "Fantasy Edge (contact: chroniicallydiistracted@gmail.com)",
         alias="NWS_USER_AGENT",
     )
-    live_poll_interval: int = Field(8000, alias="LIVE_POLL_INTERVAL")  # ms
-    live_provider: str = Field(
-        "yahoo", alias="LIVE_PROVIDER"
-    )  # "yahoo" | "espn" | etc.
+    live_poll_interval: int = Field(8000, alias="LIVE_POLL_INTERVAL")
+    live_provider: str = Field("yahoo", alias="LIVE_PROVIDER")
     session_cookie_name: str = Field("fe_session", alias="SESSION_COOKIE_NAME")
-    session_ttl_seconds: int = Field(2592000, alias="SESSION_TTL_SECONDS")  # 30 days
+    session_ttl_seconds: int = Field(2592000, alias="SESSION_TTL_SECONDS")  # 30d
 
     @property
     def cors_origins_list(self) -> list[str]:
-        """
-        Returns parsed CORS origins. If ALLOW_DEBUG_USER is true and nothing is set,
-        allow http://localhost:3000 for local dev only.
-        """
-        origins: list[str] = []
-        if self.cors_origins:
-            origins = [o.strip() for o in self.cors_origins.split(",") if o.strip()]
-        if self.allow_debug_user and "http://localhost:3000" not in origins:
-            origins.append("http://localhost:3000")
-        return origins
+        items = [o.strip() for o in (self.cors_origins or "").split(",") if o.strip()]
+        return items
 
-    # Validate Fernet key early with a friendly error if malformed
     @field_validator("token_crypto_key")
     @classmethod
     def _validate_fernet_key(cls, v: str) -> str:
-        Fernet(v)  # will raise ValueError if not 32-byte urlsafe base64
+        Fernet(v)  # raises if not a 32-byte urlsafe b64 string (44 chars)
         return v
 
 
-# IMPORTANT: instantiate outside the class
-settings = Settings()
+# Instantiate; static checkers can’t see env injection, so ignore the warning here.
+settings = Settings()  # pyright: ignore[reportCallIssue]
