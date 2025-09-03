@@ -35,9 +35,7 @@ class User(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), server_default=func.now())
     # relationships
-    oauth_tokens = relationship(
-        "OAuthToken", back_populates="user", cascade="all, delete-orphan"
-    )
+    oauth_tokens = relationship("OAuthToken", back_populates="user", cascade="all, delete-orphan")
     teams = relationship("Team", back_populates="manager")
     preferences = relationship("UserPreferences", back_populates="user", uselist=False)
     notes = relationship("Note", back_populates="user")
@@ -46,15 +44,9 @@ class User(Base):
 class WebSession(Base):
     __tablename__ = "sessions"
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    user_id = Column(
-        Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False
-    )
-    created_at = Column(
-        DateTime(timezone=True), server_default=func.now(), nullable=False
-    )
-    last_seen_at = Column(
-        DateTime(timezone=True), server_default=func.now(), nullable=False
-    )
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+    last_seen_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
     expires_at = Column(DateTime(timezone=True), nullable=False)
     user_agent = Column(Text, nullable=True)
     ip_addr = Column(String, nullable=True)
@@ -135,9 +127,7 @@ class Team(Base):
     yahoo_team_key = Column(String, nullable=True)
     name = Column(String, nullable=False)
     logo_url = Column(Text, nullable=True)
-    manager_user_id = Column(
-        Integer, ForeignKey("users.id", ondelete="SET NULL"), nullable=True
-    )
+    manager_user_id = Column(Integer, ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), server_default=func.now())
     # relationships
@@ -146,9 +136,7 @@ class Team(Base):
     roster_slots = relationship("RosterSlot", back_populates="team")
     # There are two foreign keys on Matchup pointing to Team (team_id and opponent_team_id).
     # Specify foreign_keys so SQLAlchemy can determine the correct join for Team.matchups.
-    matchups = relationship(
-        "Matchup", back_populates="team", foreign_keys="Matchup.team_id"
-    )
+    matchups = relationship("Matchup", back_populates="team", foreign_keys="Matchup.team_id")
     waiver_candidates = relationship("WaiverCandidate", back_populates="team")
     __table_args__ = (UniqueConstraint("league_id", "yahoo_team_key"),)
 
@@ -159,9 +147,7 @@ class Team(Base):
 class Player(Base):
     __tablename__ = "players"
     id = Column(Integer, primary_key=True)
-    yahoo_player_id = Column(
-        String, unique=True, nullable=True
-    )  # nullable for custom rows
+    yahoo_player_id = Column(String, unique=True, nullable=True)  # nullable for custom rows
     full_name = Column(String, nullable=False)
     position_primary = Column(String, nullable=True)  # e.g., "WR", "RB"
     nfl_team = Column(String, nullable=True)  # e.g., "KC"
@@ -240,9 +226,7 @@ class Matchup(Base):
     team_id = Column(
         Integer, ForeignKey("teams.id", ondelete="CASCADE"), nullable=False, index=True
     )
-    opponent_team_id = Column(
-        Integer, ForeignKey("teams.id", ondelete="SET NULL"), nullable=True
-    )
+    opponent_team_id = Column(Integer, ForeignKey("teams.id", ondelete="SET NULL"), nullable=True)
     projected_pts = Column(Float, nullable=True)
     actual_pts = Column(Float, nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
@@ -252,9 +236,7 @@ class Matchup(Base):
     team = relationship("Team", foreign_keys=[team_id], back_populates="matchups")
     opponent_team = relationship("Team", foreign_keys=[opponent_team_id])
     __table_args__ = (
-        UniqueConstraint(
-            "league_id", "week", "team_id", name="uq_matchups_league_week_team"
-        ),
+        UniqueConstraint("league_id", "week", "team_id", name="uq_matchups_league_week_team"),
         Index("idx_matchups_league_week", "league_id", "week"),
     )
 
@@ -280,9 +262,7 @@ class Projection(Base):
     # relationships
     player = relationship("Player", back_populates="projections")
     __table_args__ = (
-        UniqueConstraint(
-            "player_id", "week", "source", name="uq_projections_player_week_source"
-        ),
+        UniqueConstraint("player_id", "week", "source", name="uq_projections_player_week_source"),
         Index("idx_projections_week", "week"),
     )
 
@@ -319,9 +299,7 @@ class WaiverCandidate(Base):
         nullable=False,
         index=True,
     )
-    delta_xfp = Column(
-        Float, nullable=True
-    )  # Δ expected fantasy points vs worst starter
+    delta_xfp = Column(Float, nullable=True)  # Δ expected fantasy points vs worst starter
     fit_score = Column(Float, nullable=True)
     faab_suggestion = Column(Integer, nullable=True)
     acquisition_prob = Column(Float, nullable=True)
@@ -351,9 +329,7 @@ class StreamerSignal(Base):
         index=True,
     )
     # relationships
-    player = relationship(
-        "Player", back_populates="streamer_signals", foreign_keys=[player_id]
-    )
+    player = relationship("Player", back_populates="streamer_signals", foreign_keys=[player_id])
     __table_args__ = (UniqueConstraint("week", "kind", "subject_id"),)
 
 
@@ -362,9 +338,7 @@ class StreamerSignal(Base):
 # ----------------------
 class UserPreferences(Base):
     __tablename__ = "user_preferences"
-    user_id = Column(
-        Integer, ForeignKey("users.id", ondelete="CASCADE"), primary_key=True
-    )
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), primary_key=True)
     theme = Column(String, nullable=False, default="system")
     saved_views = Column(JSON, nullable=False, default="{}")
     pinned_players = Column(JSON, nullable=False, default="[]")
@@ -376,12 +350,8 @@ class UserPreferences(Base):
 class Note(Base):
     __tablename__ = "notes"
     id = Column(Integer, primary_key=True)
-    user_id = Column(
-        Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False
-    )
-    player_id = Column(
-        Integer, ForeignKey("players.id", ondelete="CASCADE"), nullable=False
-    )
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    player_id = Column(Integer, ForeignKey("players.id", ondelete="CASCADE"), nullable=False)
     note = Column(String, nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     # relationships
@@ -420,9 +390,7 @@ class JobRun(Base):
     __tablename__ = "job_runs"
     id = Column(Integer, primary_key=True)
     job_id = Column(UUID, ForeignKey("jobs.id", ondelete="CASCADE"), nullable=False)
-    started_at = Column(
-        DateTime(timezone=True), server_default=func.now(), nullable=False
-    )
+    started_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
     finished_at = Column(DateTime(timezone=True), nullable=True)
     ok = Column(Boolean, nullable=True)
     message = Column(String, nullable=True)

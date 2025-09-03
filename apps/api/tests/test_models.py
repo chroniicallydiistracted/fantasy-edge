@@ -1,6 +1,7 @@
 from app.deps import SessionLocal
 from app.models import User
 
+
 def test_user_crud():
     with SessionLocal() as s:
         u = User(email="test@example.com")

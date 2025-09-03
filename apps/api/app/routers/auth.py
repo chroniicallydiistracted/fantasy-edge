@@ -4,7 +4,6 @@ import base64
 import hashlib
 import json
 from datetime import datetime, timedelta, UTC
-from typing import Dict
 
 import httpx
 from fastapi import APIRouter, Depends, HTTPException, Request
@@ -52,10 +51,6 @@ def get_redis():
             # fallback to a best-effort Redis client
             _redis_client = Redis.from_url(settings.redis_url)
             return _redis_client
-
-
-from ..settings import settings
-from ..session import SessionManager
 
 
 def generate_state_and_verifier():
@@ -230,9 +225,7 @@ def yahoo_callback(
         ).isoformat(),
     }
 
-    redis.setex(
-        f"session:{session_id}", settings.session_ttl_seconds, json.dumps(session_data)
-    )
+    redis.setex(f"session:{session_id}", settings.session_ttl_seconds, json.dumps(session_data))
 
     # Set session cookie and redirect users to the leagues page
     response = RedirectResponse(f"{settings.web_base_url}/leagues", status_code=302)

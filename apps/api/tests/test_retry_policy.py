@@ -40,11 +40,14 @@ def test_exponential_backoff(monkeypatch):
         if calls["count"] < 2:
             calls["count"] += 1
             raise httpx.HTTPError("boom")
+
         class Resp:
             def raise_for_status(self):
                 return None
+
             def json(self):
                 return {"ok": True}
+
         return Resp()
 
     sleeps = []

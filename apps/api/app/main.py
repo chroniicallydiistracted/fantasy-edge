@@ -2,8 +2,18 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from .routers import (
-    health, auth, yahoo, optimize, players, waivers, streamers, 
-    live, leagues, team, events, preferences
+    health,
+    auth,
+    yahoo,
+    optimize,
+    players,
+    waivers,
+    streamers,
+    live,
+    leagues,
+    team,
+    events,
+    preferences,
 )
 from .logging import configure_logging
 from .settings import settings
