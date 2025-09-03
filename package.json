@@ -1,0 +1,9 @@
+{
+  "name": "fantasy-edge",
+  "private": true,
+  "workspaces": ["apps/web"],
+  "scripts": {
+    "lint": "pnpm -r lint",
+    "build": "pnpm -r build"
+  }
+}

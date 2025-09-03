@@ -17,9 +17,7 @@ def get_streamers(
 ):
     """Get streamer signals for a specific kind and week"""
     if kind not in ["def", "idp"]:
-        raise HTTPException(
-            status_code=400, detail="Invalid kind. Must be 'def' or 'idp'"
-        )
+        raise HTTPException(status_code=400, detail="Invalid kind. Must be 'def' or 'idp'")
 
     # Build streamer list from projections and player positions to match tests
     q = (
@@ -36,7 +34,5 @@ def get_streamers(
     rows = q.order_by(Projection.projected_points.desc()).all()
     results = []
     for proj, player in rows:
-        results.append(
-            {"player_id": player.id, "projected_points": proj.projected_points}
-        )
+        results.append({"player_id": player.id, "projected_points": proj.projected_points})
     return results

@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from pydantic import BaseModel
 from typing import List, Dict, Any
@@ -16,14 +16,10 @@ class PreferencesUpdate(BaseModel):
 
 
 @router.get("/")
-def get_preferences(
-    db: Session = Depends(get_db), current_user=Depends(get_current_user_session)
-):
+def get_preferences(db: Session = Depends(get_db), current_user=Depends(get_current_user_session)):
     """Get user preferences"""
     preferences = (
-        db.query(UserPreferences)
-        .filter(UserPreferences.user_id == current_user.id)
-        .first()
+        db.query(UserPreferences).filter(UserPreferences.user_id == current_user.id).first()
     )
     if not preferences:
         # Return default preferences if none exist
@@ -43,11 +39,7 @@ def update_preferences(
 ):
     """Update user preferences"""
     # Get or create preferences
-    pref = (
-        db.query(UserPreferences)
-        .filter(UserPreferences.user_id == current_user.id)
-        .first()
-    )
+    pref = db.query(UserPreferences).filter(UserPreferences.user_id == current_user.id).first()
 
     if not pref:
         pref = UserPreferences(

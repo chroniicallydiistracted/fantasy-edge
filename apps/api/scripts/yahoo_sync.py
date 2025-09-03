@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# ruff: noqa
 """
 Yahoo Data Synchronization Script
 
@@ -19,8 +20,15 @@ from redis import Redis
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from app.models import (
-    User, League, Team, Player, RosterSlot, Matchup,
-    Projection, WaiverCandidate, StreamerSignal
+    User,
+    League,
+    Team,
+    Player,
+    RosterSlot,
+    Matchup,
+    Projection,
+    WaiverCandidate,
+    StreamerSignal,
 )
 from app.yahoo_oauth import YahooOAuthClient
 from app.security import TokenEncryptionService
@@ -56,7 +64,7 @@ def get_user_yahoo_tokens(user_id: int) -> Dict[str, Any]:
         "access_token": yahoo_account.access_token_enc,
         "refresh_token": yahoo_account.refresh_token_enc,
         "expires_at": yahoo_account.access_expires_at,
-        "guid": yahoo_account.yahoo_guid
+        "guid": yahoo_account.yahoo_guid,
     }
 
 
@@ -83,7 +91,7 @@ def sync_leagues(user_id: int) -> List[League]:
                 season=league_data["season"],
                 name=league_data["name"],
                 scoring_type=league_data["scoring_type"],
-                roster_positions=league_data.get("roster_positions", [])
+                roster_positions=league_data.get("roster_positions", []),
             )
             db.add(league)
             db.commit()
@@ -100,7 +108,9 @@ def sync_leagues(user_id: int) -> List[League]:
         # Sync teams for this league
         sync_teams(league.id, user_id, league_data.get("teams", []))
 
-    return db.query(League).filter(League.yahoo_league_id.in_([l["id"] for l in leagues_data])).all()
+    return (
+        db.query(League).filter(League.yahoo_league_id.in_([l["id"] for l in leagues_data])).all()
+    )
 
 
 def sync_teams(league_id: int, user_id: int, teams_data: List[Dict[str, Any]]):
@@ -109,10 +119,11 @@ def sync_teams(league_id: int, user_id: int, teams_data: List[Dict[str, Any]]):
 
     for team_data in teams_data:
         # Check if team exists
-        team = db.query(Team).filter(
-            Team.league_id == league_id,
-            Team.yahoo_team_key == team_data["team_key"]
-        ).first()
+        team = (
+            db.query(Team)
+            .filter(Team.league_id == league_id, Team.yahoo_team_key == team_data["team_key"])
+            .first()
+        )
 
         if not team:
             # Create new team
@@ -121,7 +132,7 @@ def sync_teams(league_id: int, user_id: int, teams_data: List[Dict[str, Any]]):
                 yahoo_team_key=team_data["team_key"],
                 name=team_data["name"],
                 logo_url=team_data.get("logo_url"),
-                manager_user_id=user_id if team_data.get("is_manager") else None
+                manager_user_id=user_id if team_data.get("is_manager") else None,
             )
             db.add(team)
             db.commit()
@@ -145,9 +156,7 @@ def sync_roster(team_id: int, roster_data: List[Dict[str, Any]]):
 
     for slot_data in roster_data:
         # Check if player exists
-        player = db.query(Player).filter(
-            Player.yahoo_player_id == slot_data["player_id"]
-        ).first()
+        player = db.query(Player).filter(Player.yahoo_player_id == slot_data["player_id"]).first()
 
         if not player:
             # Create new player
@@ -157,7 +166,7 @@ def sync_roster(team_id: int, roster_data: List[Dict[str, Any]]):
                 position_primary=slot_data["position"],
                 nfl_team=slot_data.get("team"),
                 bye_week=slot_data.get("bye_week"),
-                status=slot_data.get("status")
+                status=slot_data.get("status"),
             )
             db.add(player)
             db.commit()
@@ -174,11 +183,15 @@ def sync_roster(team_id: int, roster_data: List[Dict[str, Any]]):
             logger.info(f"Updated player: {player.full_name} ({player.yahoo_player_id})")
 
         # Check if roster slot exists
-        roster_slot = db.query(RosterSlot).filter(
-            RosterSlot.team_id == team_id,
-            RosterSlot.week == current_week,
-            RosterSlot.slot == slot_data["slot"]
-        ).first()
+        roster_slot = (
+            db.query(RosterSlot)
+            .filter(
+                RosterSlot.team_id == team_id,
+                RosterSlot.week == current_week,
+                RosterSlot.slot == slot_data["slot"],
+            )
+            .first()
+        )
 
         if not roster_slot:
             # Create new roster slot
@@ -189,12 +202,14 @@ def sync_roster(team_id: int, roster_data: List[Dict[str, Any]]):
                 player_id=player.id,
                 projected_pts=slot_data.get("projected_points"),
                 actual_pts=slot_data.get("actual_points"),
-                is_starter=slot_data.get("is_starter", True)
+                is_starter=slot_data.get("is_starter", True),
             )
             db.add(roster_slot)
             db.commit()
             db.refresh(roster_slot)
-            logger.info(f"Created new roster slot: {player.full_name} as {slot_data['slot']} for team {team_id}")
+            logger.info(
+                f"Created new roster slot: {player.full_name} as {slot_data['slot']} for team {team_id}"
+            )
         else:
             # Update existing roster slot
             roster_slot.player_id = player.id
@@ -202,7 +217,9 @@ def sync_roster(team_id: int, roster_data: List[Dict[str, Any]]):
             roster_slot.actual_pts = slot_data.get("actual_points")
             roster_slot.is_starter = slot_data.get("is_starter", True)
             db.commit()
-            logger.info(f"Updated roster slot: {player.full_name} as {slot_data['slot']} for team {team_id}")
+            logger.info(
+                f"Updated roster slot: {player.full_name} as {slot_data['slot']} for team {team_id}"
+            )
 
 
 def sync_matchups(league_id: int):
@@ -218,11 +235,15 @@ def sync_matchups(league_id: int):
     # Create matchups for each team
     for team in teams:
         # Check if matchup exists
-        matchup = db.query(Matchup).filter(
-            Matchup.league_id == league_id,
-            Matchup.week == current_week,
-            Matchup.team_id == team.id
-        ).first()
+        matchup = (
+            db.query(Matchup)
+            .filter(
+                Matchup.league_id == league_id,
+                Matchup.week == current_week,
+                Matchup.team_id == team.id,
+            )
+            .first()
+        )
 
         if not matchup:
             # Create new matchup with opponent as NULL (to be filled later)
@@ -232,7 +253,7 @@ def sync_matchups(league_id: int):
                 team_id=team.id,
                 opponent_team_id=None,
                 projected_pts=0.0,
-                actual_pts=0.0
+                actual_pts=0.0,
             )
             db.add(matchup)
             db.commit()

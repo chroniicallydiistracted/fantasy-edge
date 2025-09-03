@@ -6,6 +6,9 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
 
 os.environ["DATABASE_URL"] = "sqlite://"
+os.environ.setdefault("TOKEN_CRYPTO_KEY", "MDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDA=")
+os.environ.setdefault("JWT_SECRET", "test_jwt_secret")
+os.environ["REDIS_URL"] = "redis://localhost:6379/0"
 
 from app.main import app
 from app.models import Base
