@@ -27,14 +27,11 @@ except Exception:  # pragma: no cover - optional models
     Projection = None
     Weather = None
 
-
 try:  # type: ignore  # noqa: E402
     from app.models import Injury, PlayerLink  # type: ignore
 except Exception:  # pragma: no cover - optional models
-  
     Injury = None
     PlayerLink = None
-
 from app.waiver_service import compute_waiver_shortlist  # type: ignore  # noqa: E402
 from projections import project_offense  # type: ignore  # noqa: E402
 from sqlalchemy.exc import SQLAlchemyError
