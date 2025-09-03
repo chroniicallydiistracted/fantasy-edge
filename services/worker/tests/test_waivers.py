@@ -5,8 +5,10 @@ import pytest
 from tasks import waiver_shortlist_sync
 
 try:
+
     from app.models import Base, League, Team, Player, RosterSlot, Projection  # type: ignore[import-not-found]
 except Exception:
+
     pytest.skip("app models not available", allow_module_level=True)
 
 pytestmark = pytest.mark.skip("waiver service incomplete")

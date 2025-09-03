@@ -618,6 +618,7 @@ index efc1384..deca959 100644
      return matchup
  
 +
+
  @router.get("/{team_id}/waivers")
  def get_team_waivers(
      team_id: int,
@@ -1377,12 +1378,133 @@ index d4253bf..0000000
 -        "@typescript-eslint/types": "8.42.0",
 -        "@typescript-eslint/visitor-keys": "8.42.0"
 -      },
+-      "funding": {
+-        "type": "opencollective",
+-        "url": "https://opencollective.com/typescript-eslint"
+-      },
+-      "peerDependencies": {
+-        "eslint": "^8.57.0 || ^9.0.0",
+-        "typescript": ">=4.8.4 <6.0.0"
+-      }
+-    },
+-    "node_modules/@typescript-eslint/tsconfig-utils": {
+-      "version": "8.42.0",
+-      "resolved": "https://registry.npmjs.org/@typescript-eslint/tsconfig-utils/-/tsconfig-utils-8.42.0.tgz",
+-      "integrity": "sha512-kHeFUOdwAJfUmYKjR3CLgZSglGHjbNTi1H8sTYRYV2xX6eNz4RyJ2LIgsDLKf8Yi0/GL1WZAC/DgZBeBft8QAQ==",
+-      "dev": true,
 -      "engines": {
 -        "node": "^18.18.0 || ^20.9.0 || >=21.1.0"
 -      },
 -      "funding": {
 -        "type": "opencollective",
 -        "url": "https://opencollective.com/typescript-eslint"
+-      },
+-      "peerDependencies": {
+-        "typescript": ">=4.8.4 <6.0.0"
+-      }
+-    },
+-    "node_modules/@typescript-eslint/type-utils": {
+-      "version": "8.42.0",
+-      "resolved": "https://registry.npmjs.org/@typescript-eslint/type-utils/-/type-utils-8.42.0.tgz",
+-      "integrity": "sha512-9KChw92sbPTYVFw3JLRH1ockhyR3zqqn9lQXol3/YbI6jVxzWoGcT3AsAW0mu1MY0gYtsXnUGV/AKpkAj5tVlQ==",
+-      "dev": true,
+-      "dependencies": {
+-        "@typescript-eslint/types": "8.42.0",
+-        "@typescript-eslint/typescript-estree": "8.42.0",
+-        "@typescript-eslint/utils": "8.42.0",
+-        "debug": "^4.3.4",
+-        "ts-api-utils": "^2.1.0"
+-      },
+-      "engines": {
+-        "node": "^18.18.0 || ^20.9.0 || >=21.1.0"
+-      },
+-      "funding": {
+-        "type": "opencollective",
+-        "url": "https://opencollective.com/typescript-eslint"
+-      },
+-      "peerDependencies": {
+-        "eslint": "^8.57.0 || ^9.0.0",
+-        "typescript": ">=4.8.4 <6.0.0"
+-      }
+-    },
+-    "node_modules/@typescript-eslint/tsconfig-utils": {
+-      "version": "8.42.0",
+-      "resolved": "https://registry.npmjs.org/@typescript-eslint/tsconfig-utils/-/tsconfig-utils-8.42.0.tgz",
+-      "integrity": "sha512-kHeFUOdwAJfUmYKjR3CLgZSglGHjbNTi1H8sTYRYV2xX6eNz4RyJ2LIgsDLKf8Yi0/GL1WZAC/DgZBeBft8QAQ==",
+-      "dev": true,
+-      "engines": {
+-        "node": "^18.18.0 || ^20.9.0 || >=21.1.0"
+-      },
+-      "funding": {
+-        "type": "opencollective",
+-        "url": "https://opencollective.com/typescript-eslint"
+-      },
+-      "peerDependencies": {
+-        "typescript": ">=4.8.4 <6.0.0"
+-      }
+-    },
+-    "node_modules/@typescript-eslint/type-utils": {
+-      "version": "8.42.0",
+-      "resolved": "https://registry.npmjs.org/@typescript-eslint/type-utils/-/type-utils-8.42.0.tgz",
+-      "integrity": "sha512-9KChw92sbPTYVFw3JLRH1ockhyR3zqqn9lQXol3/YbI6jVxzWoGcT3AsAW0mu1MY0gYtsXnUGV/AKpkAj5tVlQ==",
+-      "dev": true,
+-      "dependencies": {
+-        "@typescript-eslint/types": "8.42.0",
+-        "@typescript-eslint/typescript-estree": "8.42.0",
+-        "@typescript-eslint/utils": "8.42.0",
+-        "debug": "^4.3.4",
+-        "ts-api-utils": "^2.1.0"
+-      },
+-      "engines": {
+-        "node": "^18.18.0 || ^20.9.0 || >=21.1.0"
+-      },
+-      "funding": {
+-        "type": "opencollective",
+-        "url": "https://opencollective.com/typescript-eslint"
+-      },
+-      "peerDependencies": {
+-        "eslint": "^8.57.0 || ^9.0.0",
+-        "typescript": ">=4.8.4 <6.0.0"
+-      }
+-    },
+-    "node_modules/@typescript-eslint/tsconfig-utils": {
+-      "version": "8.42.0",
+-      "resolved": "https://registry.npmjs.org/@typescript-eslint/tsconfig-utils/-/tsconfig-utils-8.42.0.tgz",
+-      "integrity": "sha512-kHeFUOdwAJfUmYKjR3CLgZSglGHjbNTi1H8sTYRYV2xX6eNz4RyJ2LIgsDLKf8Yi0/GL1WZAC/DgZBeBft8QAQ==",
+-      "dev": true,
+-      "engines": {
+-        "node": "^18.18.0 || ^20.9.0 || >=21.1.0"
+-      },
+-      "funding": {
+-        "type": "opencollective",
+-        "url": "https://opencollective.com/typescript-eslint"
+-      },
+-      "peerDependencies": {
+-        "typescript": ">=4.8.4 <6.0.0"
+-      }
+-    },
+-    "node_modules/@typescript-eslint/type-utils": {
+-      "version": "8.42.0",
+-      "resolved": "https://registry.npmjs.org/@typescript-eslint/type-utils/-/type-utils-8.42.0.tgz",
+-      "integrity": "sha512-9KChw92sbPTYVFw3JLRH1ockhyR3zqqn9lQXol3/YbI6jVxzWoGcT3AsAW0mu1MY0gYtsXnUGV/AKpkAj5tVlQ==",
+-      "dev": true,
+-      "dependencies": {
+-        "@typescript-eslint/types": "8.42.0",
+-        "@typescript-eslint/typescript-estree": "8.42.0",
+-        "@typescript-eslint/utils": "8.42.0",
+-        "debug": "^4.3.4",
+-        "ts-api-utils": "^2.1.0"
+-      },
+-      "engines": {
+-        "node": "^18.18.0 || ^20.9.0 || >=21.1.0"
+-      },
+-      "funding": {
+-        "type": "opencollective",
+-        "url": "https://opencollective.com/typescript-eslint"
+-      },
+-      "peerDependencies": {
+-        "eslint": "^8.57.0 || ^9.0.0",
+-        "typescript": ">=4.8.4 <6.0.0"
 -      }
 -    },
 -    "node_modules/@typescript-eslint/tsconfig-utils": {
@@ -1502,8 +1624,7 @@ index d4253bf..0000000
 -        "node": "^18.18.0 || ^20.9.0 || >=21.1.0"
 -      },
 -      "funding": {
--        "type": "opencollective",
--        "url": "https://opencollective.com/typescript-eslint"
+-        "url": "https://opencollective.com/eslint"
 -      }
 -    },
 -    "node_modules/@typescript-eslint/visitor-keys/node_modules/eslint-visitor-keys": {
@@ -1913,7 +2034,7 @@ index d4253bf..0000000
 -      },
 -      "engines": {
 -        "node": ">= 0.4"
--      },
+-      }
 -      "funding": {
 -        "url": "https://github.com/sponsors/ljharb"
 -      }
@@ -7163,8 +7284,7 @@ index b806dc3..d7d7853 100644
 +    from app.models import Base, Injury, Player, PlayerLink
 +except Exception:
 +    pytest.skip("injury models not available", allow_module_level=True)
- 
- 
+
  def setup_db():
 diff --git a/services/worker/tests/test_projection.py b/services/worker/tests/test_projection.py
 index 1edd3b8..2919094 100644
