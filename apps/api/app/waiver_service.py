@@ -31,7 +31,9 @@ def compute_waiver_shortlist(
 
     candidates = (
         session.query(Player, Projection.projected_points)
-        .join(Projection, (Player.id == Projection.player_id) & (Projection.week == week))
+        .join(
+            Projection, (Player.id == Projection.player_id) & (Projection.week == week)
+        )
         .filter(~Player.id.in_(roster_ids))
         .all()
     )
@@ -44,10 +46,14 @@ def compute_waiver_shortlist(
                 "player_id": player.id,
                 "name": player.name,
                 "projected_points": proj,
-                "delta": proj - worst_proj,
+                "delta_xfp": proj - worst_proj,
                 "acquisition_prob": acquisition_prob,
             }
         )
 
-    results.sort(key=lambda x: x["delta"], reverse=True)
+    # Sort by delta descending, tie-break by player_id ascending to match test expectations
+    results.sort(key=lambda x: (-x["delta_xfp"], x["player_id"]))
+    # Assign an order 1..N for the shortlist
+    for idx, r in enumerate(results, start=1):
+        r["order"] = idx
     return results

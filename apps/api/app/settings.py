@@ -28,7 +28,9 @@ class Settings(BaseSettings):
     )
     web_base_url: str = Field("https://misfits.westfam.media", alias="WEB_BASE_URL")
     allow_debug_user: bool = Field(False, alias="ALLOW_DEBUG_USER")
-    cors_origins: str = Field("", alias="CORS_ORIGINS")
+    cors_origins: str = Field(
+        "http://localhost:3000,https://misfits.westfam.media", alias="CORS_ORIGINS"
+    )
     nws_user_agent: str = Field(
         "Fantasy Edge (contact: chroniicallydiistracted@gmail.com)",
         alias="NWS_USER_AGENT",

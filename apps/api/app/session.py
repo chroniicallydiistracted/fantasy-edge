@@ -4,10 +4,12 @@ from jose import JWTError, jwt
 from fastapi import Response
 from .settings import settings
 
+
 class SessionManager:
     """Manages user sessions with JWT tokens stored in cookies"""
 
-    COOKIE_NAME = "edge_session"
+    # Use canonical cookie name from settings so all codepaths agree
+    COOKIE_NAME = settings.session_cookie_name
 
     @staticmethod
     def create_token(user_id: int) -> str:

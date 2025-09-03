@@ -1,44 +1,42 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
+from typing import Optional
 
 from ..deps import get_db, get_current_user_session
-from ..models import Player, Projection, User
+from ..models import Projection, Player
 
 router = APIRouter()
 
 
-def _streamers_by_position(db: Session, week: int, position: str):
-    rows = (
-        db.query(Player, Projection.projected_points)
-        .join(Projection, (Player.id == Projection.player_id) & (Projection.week == week))
-        .filter(Player.position == position)
-        .order_by(Projection.projected_points.desc(), Player.id.asc())
-        .all()
+@router.get("/{kind}")
+def get_streamers(
+    kind: str,  # "def" or "idp"
+    week: Optional[int] = Query(None, description="Week number"),
+    db: Session = Depends(get_db),
+    current_user=Depends(get_current_user_session),
+):
+    """Get streamer signals for a specific kind and week"""
+    if kind not in ["def", "idp"]:
+        raise HTTPException(
+            status_code=400, detail="Invalid kind. Must be 'def' or 'idp'"
+        )
+
+    # Build streamer list from projections and player positions to match tests
+    q = (
+        db.query(Projection, Player)
+        .join(Player, Player.id == Projection.player_id)
+        .filter(Projection.week == week)
+        .filter(Player.position_primary.in_(["DEF", "IDP"]))
+        .filter(Projection.player_id.isnot(None))
     )
-    return [
-        {
-            "player_id": p.id,
-            "name": p.name,
-            "projected_points": round(points, 2),
-            "rank": idx + 1,
-        }
-        for idx, (p, points) in enumerate(rows)
-    ]
-
-
-@router.get("/def")
-def def_streamers(
-    week: int,
-    current_user: User = Depends(get_current_user_session),
-    db: Session = Depends(get_db),
-):
-    return _streamers_by_position(db, week, "DEF")
-
-
-@router.get("/idp")
-def idp_streamers(
-    week: int,
-    current_user: User = Depends(get_current_user_session),
-    db: Session = Depends(get_db),
-):
-    return _streamers_by_position(db, week, "IDP")
+    # filter kind: def -> position 'DEF', idp -> 'IDP'
+    kind_map = {"def": "DEF", "idp": "IDP"}
+    pos = kind_map.get(kind)
+    q = q.filter(Player.position_primary == pos)
+    rows = q.order_by(Projection.projected_points.desc()).all()
+    results = []
+    for proj, player in rows:
+        results.append(
+            {"player_id": player.id, "projected_points": proj.projected_points}
+        )
+    return results

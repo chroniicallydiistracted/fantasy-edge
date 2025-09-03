@@ -15,12 +15,14 @@ from .yahoo_client import YahooFantasyClient
 security = HTTPBearer()
 
 # Database engine and session setup
-engine = create_engine(
-    settings.database_url,
-    pool_pre_ping=True,
-    pool_size=5,
-    max_overflow=5,
-)
+engine_kwargs = {}
+# For SQLite (used in tests) the SingletonThreadPool doesn't accept pool_size/max_overflow
+if not settings.database_url.startswith("sqlite"):
+    engine_kwargs.update({"pool_pre_ping": True, "pool_size": 5, "max_overflow": 5})
+else:
+    engine_kwargs.update({"pool_pre_ping": True})
+
+engine = create_engine(settings.database_url, **engine_kwargs)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 
@@ -37,7 +39,8 @@ def get_token_encryption_service():
 
 
 def get_current_user(
-    credentials: HTTPAuthorizationCredentials = Depends(security), db: Session = Depends(get_db)
+    credentials: HTTPAuthorizationCredentials = Depends(security),
+    db: Session = Depends(get_db),
 ) -> User:
     """Get the current authenticated user from JWT token"""
     credentials_exception = HTTPException(
@@ -48,7 +51,9 @@ def get_current_user(
 
     try:
         # Decode the JWT token
-        payload = jwt.decode(credentials.credentials, settings.jwt_secret, algorithms=["HS256"])
+        payload = jwt.decode(
+            credentials.credentials, settings.jwt_secret, algorithms=["HS256"]
+        )
         user_id: int = payload.get("sub")
         if user_id is None:
             raise credentials_exception
@@ -75,7 +80,8 @@ def get_current_user_optional(
 
 
 def get_debug_user(
-    debug_user: Optional[str] = Header(None, alias="X-Debug-User"), db: Session = Depends(get_db)
+    debug_user: Optional[str] = Header(None, alias="X-Debug-User"),
+    db: Session = Depends(get_db),
 ) -> Optional[User]:
     """Get user via debug header if enabled"""
     if not settings.allow_debug_user or not debug_user:
@@ -95,13 +101,19 @@ def get_current_user_session(
 ) -> User:
     """Resolve user from session cookie"""
     if not session_token:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Not authenticated")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Not authenticated"
+        )
     user_id = SessionManager.verify_token(session_token)
     if not user_id:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Not authenticated")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Not authenticated"
+        )
     user = db.query(User).filter_by(id=user_id).first()
     if not user:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Not authenticated")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Not authenticated"
+        )
     return user
 
 
