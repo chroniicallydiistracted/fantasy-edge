@@ -6,7 +6,9 @@ from tasks import ingest_injuries_from_csv
 
 try:
     from app.models import Base, Injury, Player, PlayerLink
+    
 except Exception:
+
     pytest.skip("injury models not available", allow_module_level=True)
 
 
