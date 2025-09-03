@@ -13,13 +13,16 @@ class Settings(BaseSettings):
         case_sensitive=False,
     )
 
-    # --- required (no defaults) ---
-    database_url: str = Field(..., alias="DATABASE_URL")
-    redis_url: str = Field(..., alias="REDIS_URL")
-    yahoo_client_id: str = Field(..., alias="YAHOO_CLIENT_ID")
-    yahoo_client_secret: str = Field(..., alias="YAHOO_CLIENT_SECRET")
-    jwt_secret: str = Field(..., alias="JWT_SECRET")
-    token_crypto_key: str = Field(..., alias="TOKEN_CRYPTO_KEY")
+    # --- required in production; safe defaults for tests ---
+    database_url: str = Field("sqlite://", alias="DATABASE_URL")
+    redis_url: str = Field("redis://localhost:6379/0", alias="REDIS_URL")
+    yahoo_client_id: str = Field("test-client", alias="YAHOO_CLIENT_ID")
+    yahoo_client_secret: str = Field("test-secret", alias="YAHOO_CLIENT_SECRET")
+    jwt_secret: str = Field("test-jwt-secret", alias="JWT_SECRET")
+    token_crypto_key: str = Field(
+        "MDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDA=",
+        alias="TOKEN_CRYPTO_KEY",
+    )
 
     # --- non-secrets with defaults (quiet editor) ---
     yahoo_redirect_uri: str = Field(

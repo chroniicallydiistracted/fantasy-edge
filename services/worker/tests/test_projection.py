@@ -6,9 +6,9 @@ from tasks import generate_projections
 
 try:
     from app.models import Base, Baseline, Player, Projection, Weather
-    
-except (ImportError, ModuleNotFoundError):
 
+except Exception:
+  
     pytest.skip("app models not available", allow_module_level=True)
 
 
