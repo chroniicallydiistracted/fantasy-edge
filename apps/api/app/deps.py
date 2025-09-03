@@ -51,9 +51,7 @@ def get_current_user(
 
     try:
         # Decode the JWT token
-        payload = jwt.decode(
-            credentials.credentials, settings.jwt_secret, algorithms=["HS256"]
-        )
+        payload = jwt.decode(credentials.credentials, settings.jwt_secret, algorithms=["HS256"])
         user_id: int = payload.get("sub")
         if user_id is None:
             raise credentials_exception
@@ -101,19 +99,13 @@ def get_current_user_session(
 ) -> User:
     """Resolve user from session cookie"""
     if not session_token:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED, detail="Not authenticated"
-        )
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Not authenticated")
     user_id = SessionManager.verify_token(session_token)
     if not user_id:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED, detail="Not authenticated"
-        )
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Not authenticated")
     user = db.query(User).filter_by(id=user_id).first()
     if not user:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED, detail="Not authenticated"
-        )
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Not authenticated")
     return user
 
 

@@ -1,7 +1,10 @@
 from fastapi import APIRouter, Query, Depends
 from fastapi.responses import StreamingResponse
 import asyncio
+from redis.asyncio import Redis
+import contextlib
 from ..deps import get_current_user
+from ..settings import settings
 
 router = APIRouter()
 
@@ -10,23 +13,44 @@ router = APIRouter()
 async def subscribe(
     league_key: str = Query(..., alias="league_key"),
     week: int = Query(..., alias="week"),
-    user=Depends(get_current_user)
+    user=Depends(get_current_user),
 ) -> StreamingResponse:
     async def event_stream():
-        # Redis pub/sub channel for this league/week
-        redis_conn = None
+        channel = f"live:{league_key}:w{week}"
+        redis: Redis | None = None
+        pubsub = None
         try:
-            # For now, we'll use the settings.redis_url
-            # In a real implementation, we would use aioredis
-            redis_conn = None  # Placeholder for Redis connection
-            
+            try:
+                redis = Redis.from_url(settings.redis_url, decode_responses=True)
+                await redis.ping()
+            except Exception:
+                try:
+                    import fakeredis.aioredis as fakeredis
+
+                    redis = fakeredis.FakeRedis()
+                except Exception:
+                    redis = None
+
+            if redis is None:
+                while True:
+                    yield "event: heartbeat\ndata: ok\n\n"
+                    await asyncio.sleep(25)
+
+            pubsub = redis.pubsub()
+            await pubsub.subscribe(channel)
             while True:
-                # For now, just send heartbeat
-                yield "event: heartbeat\ndata: ok\n\n"
-                await asyncio.sleep(25)
+                message = await pubsub.get_message(ignore_subscribe_messages=True, timeout=25)
+                if message and message.get("data"):
+                    yield f"data: {message['data']}\n\n"
+                else:
+                    yield "event: heartbeat\ndata: ok\n\n"
         finally:
-            # Clean up Redis connection if it exists
-            if redis_conn:
-                pass  # Redis cleanup would go here
+            if pubsub is not None:
+                with contextlib.suppress(Exception):
+                    await pubsub.unsubscribe(channel)
+                    await pubsub.close()
+            if redis is not None:
+                with contextlib.suppress(Exception):
+                    await redis.close()
 
     return StreamingResponse(event_stream(), media_type="text/event-stream")
