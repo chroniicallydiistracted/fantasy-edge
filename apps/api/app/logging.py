@@ -4,6 +4,7 @@ import re
 SECRET_FIELDS = ["token", "secret", "password"]
 EMAIL_RE = re.compile(r"([\w.\-+]+)@([\w.\-]+)")
 
+
 class MaskingFilter(logging.Filter):
     """Filter that masks secrets and emails in log records."""
 
@@ -15,6 +16,7 @@ class MaskingFilter(logging.Filter):
         record.msg = message
         record.args = ()
         return True
+
 
 def configure_logging() -> None:
     """Configure root logger with masking filter."""
