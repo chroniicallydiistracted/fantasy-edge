@@ -15,3 +15,4 @@
 13. **[Fixed][CI]** `mypy apps/api` runs clean with no remaining errors.
 14. **[Fixed][API]** `apps/api/app/routers/live.py` now uses explicit type annotations and `AsyncGenerator` for SSE streams.
 15. **[Fixed][API]** `League.yahoo_id` hybrid property now has typed getter/setter (mypy ignore retained for hybrid_property).
+
