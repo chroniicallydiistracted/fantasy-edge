@@ -18,14 +18,19 @@ sys.path.append(str(Path(__file__).resolve().parents[2] / "apps/api"))
 sys.path.append(str(Path(__file__).resolve().parents[2] / "packages/projections"))
 sys.path.append(str(Path(__file__).resolve().parents[2] / "packages"))
 sys.path.append(str(Path(__file__).resolve().parents[2] / "packages/scoring"))
-from app.models import (  # type: ignore  # noqa: E402
-    Injury,
-    League,
-    Player,
-    PlayerLink,
-    Projection,
-    Weather,
-)
+try:  # type: ignore  # noqa: E402
+    from app.models import League, Player, Projection, Weather  # type: ignore
+except Exception:  # pragma: no cover - optional models
+    League = None
+    Player = None
+    Projection = None
+    Weather = None
+
+try:  # type: ignore  # noqa: E402
+    from app.models import Injury, PlayerLink  # type: ignore
+except Exception:  # pragma: no cover - optional models
+    Injury = None
+    PlayerLink = None
 from app.waiver_service import compute_waiver_shortlist  # type: ignore  # noqa: E402
 from projections import project_offense  # type: ignore  # noqa: E402
 from sqlalchemy.exc import SQLAlchemyError
@@ -77,6 +82,9 @@ def fetch_nflverse(url: str) -> str:
 
 def ingest_injuries_from_csv(path: Path, session) -> int:
     """Normalize injuries CSV into the database."""
+
+    if Injury is None or PlayerLink is None:
+        return 0
 
     count = 0
     with path.open() as f:
@@ -143,7 +151,7 @@ def update_weather(game_id: str, lat: float, lon: float) -> float:
     resp = requests.get(url, headers=headers)
     resp.raise_for_status()
     waf = compute_waf(resp.json())
-    if SessionLocal is None:
+    if SessionLocal is None or Weather is None:
         return waf
     session = SessionLocal()
     try:

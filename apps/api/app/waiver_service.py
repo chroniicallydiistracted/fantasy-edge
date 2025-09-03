@@ -12,9 +12,7 @@ def compute_waiver_shortlist(
 
     roster_ids = [
         rs.player_id
-        for rs in session.query(RosterSlot.player_id).filter_by(
-            team_id=team_id, week=week
-        )
+        for rs in session.query(RosterSlot.player_id).filter_by(team_id=team_id, week=week)
     ]
     if not roster_ids:
         return []
@@ -31,9 +29,7 @@ def compute_waiver_shortlist(
 
     candidates = (
         session.query(Player, Projection.projected_points)
-        .join(
-            Projection, (Player.id == Projection.player_id) & (Projection.week == week)
-        )
+        .join(Projection, (Player.id == Projection.player_id) & (Projection.week == week))
         .filter(~Player.id.in_(roster_ids))
         .all()
     )

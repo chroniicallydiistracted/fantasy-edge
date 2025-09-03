@@ -39,8 +39,6 @@ celery.conf.beat_schedule = {
     },
     "gameday-refresh": {
         "task": "tasks.ping",
-        "schedule": timedelta(
-            minutes=int(os.getenv("GAMEDAY_REFRESH_MINUTES", "10"))
-        ),
+        "schedule": timedelta(minutes=int(os.getenv("GAMEDAY_REFRESH_MINUTES", "10"))),
     },
 }
