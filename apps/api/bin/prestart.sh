@@ -27,6 +27,18 @@ except Exception as e:
     print("[prestart] DNS_ERR    =", repr(e))
 PY
 
+python - <<'PY'
+import os, base64
+k = os.getenv("TOKEN_CRYPTO_KEY","")
+print("[prestart] TOKEN_CRYPTO_KEY length:", len(k), "endswith '='?", k.endswith('='))
+try:
+    base64.urlsafe_b64decode(k)
+    print("[prestart] TOKEN_CRYPTO_KEY base64-decodes OK")
+except Exception as e:
+    print("[prestart] TOKEN_CRYPTO_KEY decode error:", e)
+PY
+
+
 echo "[prestart] Running Alembic migrations..."
 alembic upgrade head
 
