@@ -17,6 +17,7 @@
    - Tests: `pnpm lint`, `pnpm build`.
 
 5. **PR-5: Test isolation**
+
  - Mock Redis in OAuth tests to avoid external connections and stabilize CI.
   - Tests: `pytest tests/test_oauth.py`.
 6. **PR-6: Type-checking stability**

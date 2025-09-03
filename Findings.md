@@ -7,3 +7,4 @@
 5. **[Fixed][Auth]** OAuth tests seed env vars and fall back to `fakeredis`, avoiding external Redis connections.
 6. **[Fixed][Auth]** `apps/api/tests/conftest.py` now overrides `REDIS_URL` to ensure tests never hit a live Redis instance.
 7. **[Known][CI]** `mypy` hangs for both API and worker modules; SQLAlchemy and Celery typings need configuration.
+
