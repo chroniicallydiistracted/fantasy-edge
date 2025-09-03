@@ -7,6 +7,7 @@ def test_schedule_env(monkeypatch):
     monkeypatch.setenv("WAIVER_SHORTLIST_CRON", "0 8 * * WED")
     monkeypatch.setenv("GAMEDAY_REFRESH_MINUTES", "5")
     import celery_app
+
     importlib.reload(celery_app)
     beat = celery_app.celery.conf.beat_schedule
 

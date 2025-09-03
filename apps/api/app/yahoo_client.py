@@ -56,6 +56,7 @@ class YahooFantasyClient:
         data = self._request(db, user, resource, params)
         path = f"snapshots/{resource.strip('/').replace('/', '_')}.json"
         import os
+
         os.makedirs("snapshots", exist_ok=True)
         with open(path, "w", encoding="utf-8") as f:
             import json
