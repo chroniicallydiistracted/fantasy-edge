@@ -126,7 +126,6 @@ class League(Base):
         """Persist the identifier as a string to match the column type."""
         self.yahoo_league_id = str(v)
 
-
 class Team(Base):
     __tablename__ = "teams"
     id: Mapped[int] = mapped_column(primary_key=True)
