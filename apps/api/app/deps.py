@@ -61,10 +61,10 @@ def get_current_user(
             raise credentials_exception
     except JWTError:
         raise credentials_exception
-
-    # In a real implementation, we would fetch the user from the database
-    # For now, we'll return a placeholder
-    return User(id=user_id, email="user@example.com")
+    user = db.get(User, user_id)
+    if user is None:
+        raise credentials_exception
+    return user
 
 
 def get_current_user_optional(
@@ -91,10 +91,9 @@ def get_debug_user(
 
     try:
         user_id = int(debug_user)
-        # Placeholder user lookup
-        return User(id=user_id, email=f"user{user_id}@example.com")
     except ValueError:
         return None
+    return db.get(User, user_id)
 
 
 def get_current_user_session(
@@ -107,7 +106,7 @@ def get_current_user_session(
     user_id = SessionManager.verify_token(session_token)
     if not user_id:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Not authenticated")
-    user = db.query(User).filter_by(id=user_id).first()
+    user = db.get(User, user_id)
     if not user:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Not authenticated")
     return user

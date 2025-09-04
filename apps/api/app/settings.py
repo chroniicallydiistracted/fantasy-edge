@@ -41,7 +41,7 @@ class Settings(BaseSettings):
     )
     live_poll_interval: int = Field(8000, alias="LIVE_POLL_INTERVAL")
     live_provider: str = Field("yahoo", alias="LIVE_PROVIDER")
-    session_cookie_name: str = Field("fe_session", alias="SESSION_COOKIE_NAME")
+    session_cookie_name: str = Field("edge_session", alias="SESSION_COOKIE_NAME")
     session_ttl_seconds: int = Field(2592000, alias="SESSION_TTL_SECONDS")  # 30d
 
     @property
@@ -83,6 +83,6 @@ settings = Settings(
     ),
     LIVE_POLL_INTERVAL=int(os.getenv("LIVE_POLL_INTERVAL", "8000")),
     LIVE_PROVIDER=os.getenv("LIVE_PROVIDER", "yahoo"),
-    SESSION_COOKIE_NAME=os.getenv("SESSION_COOKIE_NAME", "fe_session"),
+    SESSION_COOKIE_NAME=os.getenv("SESSION_COOKIE_NAME", "edge_session"),
     SESSION_TTL_SECONDS=int(os.getenv("SESSION_TTL_SECONDS", "2592000")),
 )
