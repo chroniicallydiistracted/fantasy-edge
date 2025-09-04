@@ -18,3 +18,4 @@
 16. **[Fixed][Auth]** Default `SESSION_COOKIE_NAME` set to `edge_session` to align with project specification.
 17. **[Fixed][Auth]** `get_current_user` and debug-user dependency now query the database for `User` records rather than returning placeholders.
 18. **[Fixed][Worker]** Celery tasks now accept typed `Session` objects, strengthening static analysis across worker routines.
+
