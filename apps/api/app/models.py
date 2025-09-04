@@ -117,14 +117,14 @@ class League(Base):
     # Backwards-compatible alias expected by tests. Use hybrid_property so
     # SQLAlchemy can use it inside query expressions (tests do select(League).where(League.yahoo_id == ...)).
     @hybrid_property
-    def yahoo_id(self):
+    def yahoo_id(self) -> str:
+        """Return the Yahoo league identifier used by tests."""
         return self.yahoo_league_id
 
     @yahoo_id.setter  # type: ignore[no-redef]
-    def yahoo_id(self, v):
-        # store as string to match the underlying column type
-        self.yahoo_league_id = str(v) if v is not None else None
-
+    def yahoo_id(self, v: str | int) -> None:
+        """Persist the identifier as a string to match the column type."""
+        self.yahoo_league_id = str(v)
 
 class Team(Base):
     __tablename__ = "teams"
