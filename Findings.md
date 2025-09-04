@@ -8,4 +8,12 @@
 6. **[Fixed][Auth]** `apps/api/tests/conftest.py` now overrides `REDIS_URL` to ensure tests never hit a live Redis instance.
 7. **[Fixed][Auth]** `apps/api/app/settings.py` now provides safe defaults for required environment variables, allowing tests and static analysis without external configuration.
 8. **[Fixed][Web]** Added root `package.json` and `pnpm-workspace.yaml` so `pnpm lint` and `pnpm build` run from the repository root.
-9. **[Known][CI]** `mypy` still fails for the API (`apps/api/app`) due to missing env defaults and legacy SQLAlchemy base classes; worker type checks now pass after adding stub ignores.
+9. **[Fixed][API]** `apps/api/app/models.py` now defines ORM attributes with SQLAlchemy 2.0 `Mapped`/`mapped_column`, eliminating `Column[...]` typing issues.
+10. **[Fixed][API]** `apps/api/app/settings.py` now injects environment defaults explicitly, removing mypy `call-arg` warnings.
+11. **[Fixed][CI]** Installed `types-python-jose` to satisfy missing stub errors for `jose` imports.
+12. **[Fixed][API]** Session utilities, OAuth refresh logic, and migration scripts now use precise types and cookie casing.
+13. **[Fixed][CI]** `mypy apps/api` runs clean with no remaining errors.
+14. **[Fixed][API]** `apps/api/app/routers/live.py` now uses explicit type annotations and `AsyncGenerator` for SSE streams.
+15. **[Fixed][API]** `League.yahoo_id` hybrid property now has typed getter/setter (mypy ignore retained for hybrid_property).
+16. **[Fixed][Auth]** Default `SESSION_COOKIE_NAME` set to `edge_session` to align with project specification.
+17. **[Fixed][Auth]** `get_current_user` and debug-user dependency now query the database for `User` records rather than returning placeholders.
