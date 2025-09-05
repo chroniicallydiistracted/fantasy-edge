@@ -3,13 +3,16 @@ import os
 import sys
 from datetime import datetime
 from pathlib import Path
+import importlib
+from types import ModuleType
 from typing import Any, Dict
 
-import requests  # type: ignore
+import requests
 import uvicorn
 from fastapi import FastAPI
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.orm import Session, sessionmaker
 
 from celery_app import celery  # type: ignore
 
@@ -20,22 +23,20 @@ sys.path.append(str(Path(__file__).resolve().parents[2] / "packages"))
 sys.path.append(str(Path(__file__).resolve().parents[2] / "packages/scoring"))
 
 
-try:  # type: ignore  # noqa: E402
-    from app.models import League, Player, Projection, Weather  # type: ignore
+models: ModuleType | None
+try:  # pragma: no cover - optional models
+    models = importlib.import_module("app.models")
 except Exception:  # pragma: no cover - optional models
-    League = None
-    Player = None
-    Projection = None
-    Weather = None
+    models = None
 
-try:  # type: ignore  # noqa: E402
-    from app.models import Injury, PlayerLink  # type: ignore
-except Exception:  # pragma: no cover - optional models
-    Injury = None
-    PlayerLink = None
+League: Any = getattr(models, "League", None) if models else None
+Player: Any = getattr(models, "Player", None) if models else None
+Projection: Any = getattr(models, "Projection", None) if models else None
+Weather: Any = getattr(models, "Weather", None) if models else None
+Injury: Any = getattr(models, "Injury", None) if models else None
+PlayerLink: Any = getattr(models, "PlayerLink", None) if models else None
 from app.waiver_service import compute_waiver_shortlist  # type: ignore  # noqa: E402
 from projections import project_offense  # type: ignore  # noqa: E402
-from sqlalchemy.exc import SQLAlchemyError
 
 
 DATABASE_URL = os.getenv("DATABASE_URL")
@@ -43,7 +44,9 @@ try:
     engine = create_engine(DATABASE_URL) if DATABASE_URL else None
 except Exception:  # pragma: no cover - missing driver
     engine = None
-SessionLocal = sessionmaker(bind=engine) if engine else None
+SessionLocal: sessionmaker[Session] | None = (
+    sessionmaker(bind=engine) if engine else None
+)
 
 DATA_PATH = Path(os.getenv("DATA_PATH", "/data"))
 
@@ -82,7 +85,7 @@ def fetch_nflverse(url: str) -> str:
     return str(fetch_and_cache(url, dest))
 
 
-def ingest_injuries_from_csv(path: Path, session) -> int:
+def ingest_injuries_from_csv(path: Path, session: Session) -> int:
     """Normalize injuries CSV into the database."""
 
     if Injury is None or PlayerLink is None:
@@ -115,7 +118,7 @@ def ingest_injuries_from_csv(path: Path, session) -> int:
 def ingest_injuries(csv_path: str) -> int:
     if SessionLocal is None:
         return 0
-    session = SessionLocal()
+    session: Session = SessionLocal()
     try:
         return ingest_injuries_from_csv(Path(csv_path), session)
     finally:
@@ -155,7 +158,7 @@ def update_weather(game_id: str, lat: float, lon: float) -> float:
     waf = compute_waf(resp.json())
     if SessionLocal is None or Weather is None:
         return waf
-    session = SessionLocal()
+    session: Session = SessionLocal()
     try:
         session.merge(Weather(game_id=game_id, waf=waf))
         session.commit()
@@ -166,7 +169,7 @@ def update_weather(game_id: str, lat: float, lon: float) -> float:
     return waf
 
 
-def generate_projections(session, week: int) -> int:
+def generate_projections(session: Session, week: int) -> int:
     players = session.query(Player).all()
     count = 0
     for player in players:
@@ -195,7 +198,7 @@ def generate_projections(session, week: int) -> int:
 def project_week(week: int) -> int:
     if SessionLocal is None:
         return 0
-    session = SessionLocal()
+    session: Session = SessionLocal()
     try:
         return generate_projections(session, week)
     finally:
@@ -203,7 +206,7 @@ def project_week(week: int) -> int:
 
 
 def waiver_shortlist_sync(
-    session, league_id: int, week: int, horizon: int = 1
+    session: Session, league_id: int, week: int, horizon: int = 1
 ) -> Dict[int, Any]:
     league = session.query(League).filter_by(id=league_id).first()
     if not league:
@@ -218,7 +221,7 @@ def waiver_shortlist_sync(
 def waiver_shortlist(league_id: int, week: int, horizon: int = 1) -> Dict[int, Any]:
     if SessionLocal is None:
         return {}
-    session = SessionLocal()
+    session: Session = SessionLocal()
     try:
         return waiver_shortlist_sync(session, league_id, week, horizon)
     finally:

@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta, UTC
-from typing import Optional
+from typing import Optional, Literal, Any, cast
 from jose import JWTError, jwt
 from fastapi import Response
 from .settings import settings
@@ -14,9 +14,9 @@ class SessionManager:
     @staticmethod
     def create_token(user_id: int) -> str:
         """Create a JWT token for the user"""
-        data = {"sub": str(user_id)}
+        data: dict[str, Any] = {"sub": str(user_id)}
         expires = datetime.now(UTC) + timedelta(days=7)  # 7-day expiry
-        data.update({"exp": expires})
+        data["exp"] = expires
         return jwt.encode(data, settings.jwt_secret, algorithm="HS256")
 
     @staticmethod
@@ -24,12 +24,12 @@ class SessionManager:
         """Set the session cookie in the response"""
         token = SessionManager.create_token(user_id)
         secure = not settings.allow_debug_user
-        samesite = "None" if secure else "Lax"
+        raw_samesite = "None" if secure else "Lax"
         response.set_cookie(
             key=SessionManager.COOKIE_NAME,
             value=token,
             httponly=True,
-            samesite=samesite,
+            samesite=cast(Literal["lax", "strict", "none"], raw_samesite),
             secure=secure,
             max_age=60 * 60 * 24 * 7,
         )
@@ -44,7 +44,10 @@ class SessionManager:
         """Verify a JWT token and return the user ID"""
         try:
             payload = jwt.decode(token, settings.jwt_secret, algorithms=["HS256"])
-            user_id = int(payload.get("sub"))
+            sub = payload.get("sub")
+            if sub is None:
+                return None
+            user_id = int(sub)
             return user_id
-        except (JWTError, ValueError):
+        except (JWTError, ValueError, TypeError):
             return None

@@ -29,6 +29,7 @@ from app.models import (
     Projection,
     WaiverCandidate,
     StreamerSignal,
+    YahooAccount,
 )
 from app.yahoo_oauth import YahooOAuthClient
 from app.security import TokenEncryptionService
@@ -40,15 +41,17 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # Global variables
-db: Session = None
-redis: Redis = None
-yahoo_client: YahooOAuthClient = None
+db: Session | None = None
+redis: Redis | None = None
+yahoo_client: YahooOAuthClient | None = None
 current_week: int = 1  # In a real implementation, this would be determined from the NFL schedule
 
 
 def get_user_yahoo_tokens(user_id: int) -> Dict[str, Any]:
     """Get Yahoo OAuth tokens for a user"""
     global db
+    if db is None:
+        raise RuntimeError("DB session not initialized")
 
     # Get user's Yahoo account
     user = db.query(User).filter(User.id == user_id).first()
@@ -71,13 +74,16 @@ def get_user_yahoo_tokens(user_id: int) -> Dict[str, Any]:
 def sync_leagues(user_id: int) -> List[League]:
     """Sync user's Yahoo leagues"""
     global db, yahoo_client, current_week
+    if db is None or yahoo_client is None:
+        raise RuntimeError("Dependencies not initialized")
+    assert db is not None and yahoo_client is not None
 
     # Get user's Yahoo tokens
     tokens = get_user_yahoo_tokens(user_id)
 
     # Make API request to get leagues
     # This is a simplified example - in a real implementation, you'd use the Yahoo Fantasy API
-    leagues_data = []
+    leagues_data: list[dict[str, Any]] = []
 
     # Process each league
     for league_data in leagues_data:
@@ -116,6 +122,9 @@ def sync_leagues(user_id: int) -> List[League]:
 def sync_teams(league_id: int, user_id: int, teams_data: List[Dict[str, Any]]):
     """Sync teams for a league"""
     global db
+    if db is None:
+        raise RuntimeError("DB session not initialized")
+    assert db is not None
 
     for team_data in teams_data:
         # Check if team exists
@@ -153,6 +162,9 @@ def sync_teams(league_id: int, user_id: int, teams_data: List[Dict[str, Any]]):
 def sync_roster(team_id: int, roster_data: List[Dict[str, Any]]):
     """Sync roster for a team"""
     global db, current_week
+    if db is None:
+        raise RuntimeError("DB session not initialized")
+    assert db is not None
 
     for slot_data in roster_data:
         # Check if player exists
@@ -225,6 +237,9 @@ def sync_roster(team_id: int, roster_data: List[Dict[str, Any]]):
 def sync_matchups(league_id: int):
     """Sync matchups for a league"""
     global db, current_week
+    if db is None:
+        raise RuntimeError("DB session not initialized")
+    assert db is not None
 
     # This is a simplified implementation
     # In a real implementation, you would fetch matchup data from Yahoo API
