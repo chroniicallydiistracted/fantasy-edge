@@ -45,6 +45,7 @@ class User(Base):
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now()
     )
+
     oauth_tokens: Mapped[list[OAuthToken]] = relationship(
         back_populates="user", cascade="all, delete-orphan"
     )
@@ -52,6 +53,7 @@ class User(Base):
     preferences: Mapped[UserPreferences | None] = relationship(
         back_populates="user", uselist=False
     )
+
     notes: Mapped[list[Note]] = relationship(back_populates="user")
 
 
@@ -60,6 +62,7 @@ class WebSession(Base):
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
+
     user_id: Mapped[int] = mapped_column(
         Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False
     )
@@ -128,12 +131,14 @@ class League(Base):
     name: Mapped[str] = mapped_column(String, nullable=False)
     scoring_type: Mapped[str | None] = mapped_column(String)
     roster_positions: Mapped[list] = mapped_column(JSON, nullable=False, default=list)
+
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now()
     )
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now()
     )
+
     teams: Mapped[list[Team]] = relationship(back_populates="league")
 
     # Backwards-compatible alias expected by tests. Use hybrid_property so
@@ -147,7 +152,6 @@ class League(Base):
     def yahoo_id(self, v: str | int) -> None:
         """Persist the identifier as a string to match the column type."""
         self.yahoo_league_id = str(v)
-
 
 class Team(Base):
     __tablename__ = "teams"
@@ -164,6 +168,7 @@ class Team(Base):
     manager_user_id: Mapped[int | None] = mapped_column(
         Integer, ForeignKey("users.id", ondelete="SET NULL")
     )
+
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now()
     )
@@ -176,9 +181,11 @@ class Team(Base):
     matchups: Mapped[list[Matchup]] = relationship(
         back_populates="team", foreign_keys="Matchup.team_id"
     )
+
     waiver_candidates: Mapped[list[WaiverCandidate]] = relationship(
         back_populates="team"
     )
+
     __table_args__ = (UniqueConstraint("league_id", "yahoo_team_key"),)
 
 
@@ -443,6 +450,7 @@ class StreamerSignal(Base):
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now()
     )
+
     player_id: Mapped[int | None] = mapped_column(
         Integer,
         ForeignKey("players.id", ondelete="CASCADE"),
@@ -522,8 +530,6 @@ class Job(Base):
     runs: Mapped[list[JobRun]] = relationship(
         back_populates="job", cascade="all, delete-orphan"
     )
-
-
 class JobRun(Base):
     __tablename__ = "job_runs"
     id: Mapped[int] = mapped_column(primary_key=True)

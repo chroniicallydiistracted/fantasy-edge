@@ -20,3 +20,4 @@
 18. **[Fixed][Worker]** Celery tasks now accept typed `Session` objects, strengthening static analysis across worker routines.
 19. **[Fixed][API]** Restored analytical models (`Baseline`, `Weather`, `Injury`, `PlayerLink`) with typed columns so worker tests can access them.
 20. **[Fixed][Worker]** Celery tasks import optional models via typed fallbacks, eliminating `mypy` errors when modules are absent.
+
