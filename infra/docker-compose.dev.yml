@@ -15,7 +15,7 @@ services:
   api:
     build:
       context: ../apps/api
-      dockerfile: Dockerfile.dev   # see note below
+      dockerfile: Dockerfile
     working_dir: /app
     env_file: ../.env.dev
     environment:
@@ -33,7 +33,7 @@ services:
   worker:
     build:
       context: ../services/worker
-      dockerfile: Dockerfile.dev   # mirror api’s pattern
+      dockerfile: Dockerfile
     working_dir: /app
     env_file: ../.env.dev
     environment:
@@ -50,7 +50,7 @@ services:
   web:
     build:
       context: ../apps/web
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile
     working_dir: /app
     environment:
       NEXT_PUBLIC_API_BASE: http://localhost:8000   # browser → host
@@ -60,7 +60,7 @@ services:
       - web_node_modules:/app/node_modules
     ports: ["3000:3000"]
     depends_on: [api]
-    command: sh -lc "npm ci && npm run dev"
+    command: sh -lc "npm install && npm run dev"
 
 volumes:
   web_node_modules:

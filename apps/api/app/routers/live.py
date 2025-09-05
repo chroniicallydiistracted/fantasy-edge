@@ -8,7 +8,7 @@ from fastapi.responses import StreamingResponse
 from redis.asyncio import Redis
 from redis.asyncio.client import PubSub
 
-from ..deps import get_current_user
+from ..deps import get_current_user_session
 from ..models import User
 from ..settings import settings
 
@@ -19,7 +19,7 @@ router = APIRouter()
 async def subscribe(
     league_key: str = Query(..., alias="league_key"),
     week: int = Query(..., alias="week"),
-    user: User = Depends(get_current_user),
+    user: User = Depends(get_current_user_session),
 ) -> StreamingResponse:
     async def event_stream() -> AsyncGenerator[str, None]:
         channel = f"live:{league_key}:w{week}"

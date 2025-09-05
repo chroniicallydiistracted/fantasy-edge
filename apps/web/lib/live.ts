@@ -1,11 +1,19 @@
 import { API_BASE } from "./api";
 
-export function subscribeToLive(onMessage: (ev: MessageEvent) => void): () => void {
+export function subscribeToLive(
+  leagueKey: string,
+  week: number,
+  onMessage: (ev: MessageEvent) => void
+): () => void {
   let es: EventSource | null = null;
   let retry = 1000;
 
   const connect = () => {
-    es = new EventSource(`${API_BASE}/live/subscribe`);
+    const url = `${API_BASE}/live/subscribe?league_key=${encodeURIComponent(
+      leagueKey
+    )}&week=${week}`;
+    // withCredentials ensures cookies are sent cross-origin when CORS allows it
+    es = new EventSource(url, { withCredentials: true } as any);
     es.onmessage = onMessage;
     es.onerror = () => {
       es?.close();

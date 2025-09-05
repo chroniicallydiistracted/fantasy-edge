@@ -31,6 +31,6 @@ services:
       - key: WEB_BASE_URL
         value: https://misfits.westfam.media
       - key: SESSION_COOKIE_NAME
-        value: fe_session
+        value: edge_session
       - key: SESSION_TTL_SECONDS
         value: 2592000

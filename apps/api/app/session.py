@@ -15,7 +15,7 @@ class SessionManager:
     def create_token(user_id: int) -> str:
         """Create a JWT token for the user"""
         data: dict[str, Any] = {"sub": str(user_id)}
-        expires = datetime.now(UTC) + timedelta(days=7)  # 7-day expiry
+        expires = datetime.now(UTC) + timedelta(seconds=settings.session_ttl_seconds)
         data["exp"] = expires
         return jwt.encode(data, settings.jwt_secret, algorithm="HS256")
 
@@ -31,7 +31,8 @@ class SessionManager:
             httponly=True,
             samesite=cast(Literal["lax", "strict", "none"], raw_samesite),
             secure=secure,
-            max_age=60 * 60 * 24 * 7,
+            max_age=settings.session_ttl_seconds,
+            domain=settings.session_cookie_domain if settings.session_cookie_domain else None,
         )
 
     @staticmethod

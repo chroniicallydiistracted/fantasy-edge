@@ -139,11 +139,17 @@ def yahoo_callback(
     auth = f"{settings.yahoo_client_id}:{settings.yahoo_client_secret}"
     auth_header = base64.b64encode(auth.encode()).decode()
 
+    # Redis may return bytes; ensure verifier is a str
+    if isinstance(verifier, (bytes, bytearray)):
+        verifier_str = verifier.decode()
+    else:
+        verifier_str = str(verifier) if verifier is not None else ""
+
     data = {
         "grant_type": "authorization_code",
         "code": code,
         "redirect_uri": settings.yahoo_redirect_uri,
-        "code_verifier": verifier,
+        "code_verifier": verifier_str,
     }
 
     headers = {
@@ -215,33 +221,11 @@ def yahoo_callback(
         db.add(oauth)
     db.commit()
 
-    # Create session ID and store session data in Redis
-    session_id = secrets.token_urlsafe(32)
-    session_data = {
-        "provider": "yahoo",
-        "user_id": user.id,
-        "created_at": datetime.now(UTC).isoformat(),
-        "expires_at": (
-            datetime.now(UTC) + timedelta(seconds=settings.session_ttl_seconds)
-        ).isoformat(),
-    }
-
-    redis.setex(f"session:{session_id}", settings.session_ttl_seconds, json.dumps(session_data))
-
-    # Set session cookie and redirect users to the leagues page
+    # Issue a signed session cookie (JWT) compatible with current auth guards
     redirect: RedirectResponse = RedirectResponse(
         f"{settings.web_base_url}/leagues", status_code=302
     )
-    redirect.set_cookie(
-        key=SessionManager.COOKIE_NAME,
-        value=session_id,
-        path="/",
-        secure=True,
-        httponly=True,
-        samesite="none",
-        max_age=settings.session_ttl_seconds,
-    )
-
+    SessionManager.set_session_cookie(redirect, user.id)
     return redirect
 
 

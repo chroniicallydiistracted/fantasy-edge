@@ -6,8 +6,23 @@ export async function apiFetch<T>(
 
   init: RequestInit = {}
 ): Promise<T> {
+  let headers: HeadersInit | undefined = init.headers as any;
+  // On the server, forward the incoming cookies to the API for auth
+  if (typeof window === "undefined") {
+    try {
+      const mod = await import("next/headers");
+      const cookieHeader = mod.cookies().toString();
+      const h = new Headers(init.headers as any);
+      if (cookieHeader) h.set("cookie", cookieHeader);
+      headers = h;
+    } catch {
+      // ignore if not in a Next server context
+    }
+  }
+
   const res = await fetch(`${API_BASE}${path}`, {
     credentials: "include",
+    headers,
     ...init,
   });
   

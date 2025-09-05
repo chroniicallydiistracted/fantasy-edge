@@ -43,6 +43,7 @@ class Settings(BaseSettings):
     live_provider: str = Field("yahoo", alias="LIVE_PROVIDER")
     session_cookie_name: str = Field("edge_session", alias="SESSION_COOKIE_NAME")
     session_ttl_seconds: int = Field(2592000, alias="SESSION_TTL_SECONDS")  # 30d
+    session_cookie_domain: str | None = Field(None, alias="SESSION_COOKIE_DOMAIN")
 
     @property
     def cors_origins_list(self) -> list[str]:
@@ -85,4 +86,5 @@ settings = Settings(
     LIVE_PROVIDER=os.getenv("LIVE_PROVIDER", "yahoo"),
     SESSION_COOKIE_NAME=os.getenv("SESSION_COOKIE_NAME", "edge_session"),
     SESSION_TTL_SECONDS=int(os.getenv("SESSION_TTL_SECONDS", "2592000")),
+    SESSION_COOKIE_DOMAIN=os.getenv("SESSION_COOKIE_DOMAIN"),
 )

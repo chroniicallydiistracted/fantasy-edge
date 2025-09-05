@@ -15,11 +15,13 @@ def get_streamers(
     db: Session = Depends(get_db),
     current_user=Depends(get_current_user_session),
 ):
-    """Get streamer signals for a specific kind and week"""
+    """Get streamer signals for a specific kind and week.
+
+    Returns player_id, name, projected_points, and a 1-based rank.
+    """
     if kind not in ["def", "idp"]:
         raise HTTPException(status_code=400, detail="Invalid kind. Must be 'def' or 'idp'")
 
-    # Build streamer list from projections and player positions to match tests
     q = (
         db.query(Projection, Player)
         .join(Player, Player.id == Projection.player_id)
@@ -27,12 +29,17 @@ def get_streamers(
         .filter(Player.position_primary.in_(["DEF", "IDP"]))
         .filter(Projection.player_id.isnot(None))
     )
-    # filter kind: def -> position 'DEF', idp -> 'IDP'
-    kind_map = {"def": "DEF", "idp": "IDP"}
-    pos = kind_map.get(kind)
+    pos = {"def": "DEF", "idp": "IDP"}[kind]
     q = q.filter(Player.position_primary == pos)
-    rows = q.order_by(Projection.projected_points.desc()).all()
+    rows = q.order_by(Projection.projected_points.desc(), Player.id.asc()).all()
     results = []
-    for proj, player in rows:
-        results.append({"player_id": player.id, "projected_points": proj.projected_points})
+    for idx, (proj, player) in enumerate(rows, start=1):
+        results.append(
+            {
+                "player_id": player.id,
+                "name": player.full_name,
+                "projected_points": proj.projected_points,
+                "rank": idx,
+            }
+        )
     return results

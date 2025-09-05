@@ -20,6 +20,20 @@ Date: 2025-09-03
 - **Phase 14 – PostgreSQL Wiring**: Completed. SQLAlchemy engine/session with FastAPI dependency, ORM models for User, OAuthToken, League, Team, Player, PlayerLink, RosterSlot, Projection, Alembic migrations with Neon support, health check with DB connectivity, environment configuration for local and Neon, and minimal tests.
 - **Timezone Handling**: Replaced all uses of `datetime.utcnow()` with `datetime.now(datetime.UTC)` across API modules and tests.
 
+## Remediation Actions (Latest)
+
+- Fixed login cookie mismatch by issuing JWT cookie via `SessionManager.set_session_cookie` in `apps/api/app/routers/auth.py`.
+- Added `apps/api/bin/prestart.sh` and kept `render.yaml` startCommand to run Alembic then start uvicorn.
+- Repaired dev compose: pointed to existing Dockerfiles and added `/.env.dev`; switched web command to `npm install && npm run dev`.
+- Forwarded cookies in SSR API calls (apps/web/lib/api.ts) and removed hardcoded production login URLs in server pages.
+- SSE now authorizes via cookie (`get_current_user_session`) and client supplies `league_key`/`week` with credentials.
+- Session TTL alignment: JWT expiry and cookie `max_age` now respect `SESSION_TTL_SECONDS`.
+- Optional cross‑subdomain SSR: added `SESSION_COOKIE_DOMAIN` support; set to `.westfam.media` in prod to share cookie.
+- PKCE robustness: ensure `code_verifier` sent as UTF‑8 string when loaded from Redis.
+- Removed duplicate `/team/{team_id}/waivers` route from `team.py`; kept dedicated `waivers.py`.
+- Streamers API returns `name` and `rank` for UI expectations.
+- Removed committed secrets file `apps/api/.env`. Rotation of provider secrets remains outstanding.
+
 ## Audit and Phase 1 Fixes Implementation
 
 ### Background
