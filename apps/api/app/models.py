@@ -39,19 +39,30 @@ class User(Base):
     email: Mapped[str | None] = mapped_column(String, unique=True, index=True)
     display_name: Mapped[str | None] = mapped_column(Text)
     avatar_url: Mapped[str | None] = mapped_column(Text)
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
-    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
+
     oauth_tokens: Mapped[list[OAuthToken]] = relationship(
         back_populates="user", cascade="all, delete-orphan"
     )
     teams: Mapped[list[Team]] = relationship(back_populates="manager")
-    preferences: Mapped[UserPreferences | None] = relationship(back_populates="user", uselist=False)
+    preferences: Mapped[UserPreferences | None] = relationship(
+        back_populates="user", uselist=False
+    )
+
     notes: Mapped[list[Note]] = relationship(back_populates="user")
 
 
 class WebSession(Base):
     __tablename__ = "sessions"
-    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+
     user_id: Mapped[int] = mapped_column(
         Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False
     )
@@ -61,7 +72,9 @@ class WebSession(Base):
     last_seen_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), nullable=False
     )
-    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    expires_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False
+    )
     user_agent: Mapped[str | None] = mapped_column(Text)
     ip_addr: Mapped[str | None] = mapped_column(String)
     user: Mapped[User] = relationship()
@@ -77,9 +90,15 @@ class YahooAccount(Base):
     scope: Mapped[str | None] = mapped_column(Text)
     access_token_enc: Mapped[str] = mapped_column(Text, nullable=False)
     refresh_token_enc: Mapped[str] = mapped_column(Text, nullable=False)
-    access_expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
-    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    access_expires_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
     user: Mapped[User] = relationship()
 
 
@@ -95,7 +114,9 @@ class OAuthToken(Base):
     expires_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     scope: Mapped[str | None] = mapped_column(Text)
     guid: Mapped[str | None] = mapped_column(String, unique=True, index=True)
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
     user: Mapped[User] = relationship(back_populates="oauth_tokens")
 
 
@@ -110,8 +131,14 @@ class League(Base):
     name: Mapped[str] = mapped_column(String, nullable=False)
     scoring_type: Mapped[str | None] = mapped_column(String)
     roster_positions: Mapped[list] = mapped_column(JSON, nullable=False, default=list)
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
-    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
+
     teams: Mapped[list[Team]] = relationship(back_populates="league")
 
     # Backwards-compatible alias expected by tests. Use hybrid_property so
@@ -141,15 +168,24 @@ class Team(Base):
     manager_user_id: Mapped[int | None] = mapped_column(
         Integer, ForeignKey("users.id", ondelete="SET NULL")
     )
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
-    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
     league: Mapped[League] = relationship(back_populates="teams")
     manager: Mapped[User | None] = relationship()
     roster_slots: Mapped[list[RosterSlot]] = relationship(back_populates="team")
     matchups: Mapped[list[Matchup]] = relationship(
         back_populates="team", foreign_keys="Matchup.team_id"
     )
-    waiver_candidates: Mapped[list[WaiverCandidate]] = relationship(back_populates="team")
+
+    waiver_candidates: Mapped[list[WaiverCandidate]] = relationship(
+        back_populates="team"
+    )
+
     __table_args__ = (UniqueConstraint("league_id", "yahoo_team_key"),)
 
 
@@ -166,13 +202,24 @@ class Player(Base):
     bye_week: Mapped[int | None] = mapped_column(SmallInteger)
     status: Mapped[str | None] = mapped_column(String)
     meta: Mapped[dict] = mapped_column(JSON, nullable=False, default=dict)
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
-    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
     roster_slots: Mapped[list[RosterSlot]] = relationship(back_populates="player")
     projections: Mapped[list[Projection]] = relationship(back_populates="player")
     notes: Mapped[list[Note]] = relationship(back_populates="player")
-    waiver_candidates: Mapped[list[WaiverCandidate]] = relationship(back_populates="player")
-    streamer_signals: Mapped[list[StreamerSignal]] = relationship(back_populates="player")
+    waiver_candidates: Mapped[list[WaiverCandidate]] = relationship(
+        back_populates="player"
+    )
+    streamer_signals: Mapped[list[StreamerSignal]] = relationship(
+        back_populates="player"
+    )
+    baselines: Mapped[list["Baseline"]] = relationship(back_populates="player")
+    injuries: Mapped[list["Injury"]] = relationship(back_populates="player")
+    links: Mapped[list["PlayerLink"]] = relationship(back_populates="player")
     __table_args__ = (Index("idx_players_pos", "position_primary"),)
 
     # Backwards-compatible aliases for tests
@@ -194,6 +241,62 @@ class Player(Base):
 
 
 # ----------------------
+# Player Metadata & Analytics
+# ----------------------
+
+
+class PlayerLink(Base):
+    __tablename__ = "player_links"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    player_id: Mapped[int] = mapped_column(
+        Integer,
+        ForeignKey("players.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    gsis_id: Mapped[str | None] = mapped_column(String, unique=True)
+    player: Mapped[Player] = relationship(back_populates="links")
+
+
+class Baseline(Base):
+    __tablename__ = "baselines"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    player_id: Mapped[int] = mapped_column(
+        Integer,
+        ForeignKey("players.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    metric: Mapped[str] = mapped_column(String, nullable=False, index=True)
+    value: Mapped[float] = mapped_column(Float, nullable=False)
+    player: Mapped[Player] = relationship(back_populates="baselines")
+    __table_args__ = (UniqueConstraint("player_id", "metric"),)
+
+
+class Weather(Base):
+    __tablename__ = "weather"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    game_id: Mapped[str] = mapped_column(String, unique=True, nullable=False)
+    waf: Mapped[float] = mapped_column(Float, nullable=False)
+
+
+class Injury(Base):
+    __tablename__ = "injuries"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    player_id: Mapped[int] = mapped_column(
+        Integer,
+        ForeignKey("players.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    status: Mapped[str] = mapped_column(String, nullable=False)
+    report_time: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False
+    )
+    player: Mapped[Player] = relationship(back_populates="injuries")
+
+
+# ----------------------
 # Roster, Matchups, Projections
 # ----------------------
 class RosterSlot(Base):
@@ -210,8 +313,12 @@ class RosterSlot(Base):
     projected_pts: Mapped[float | None] = mapped_column(Float)
     actual_pts: Mapped[float | None] = mapped_column(Float)
     is_starter: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
-    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
     team: Mapped[Team] = relationship(back_populates="roster_slots")
     player: Mapped[Player | None] = relationship(back_populates="roster_slots")
     __table_args__ = (
@@ -238,13 +345,19 @@ class Matchup(Base):
     )
     projected_pts: Mapped[float | None] = mapped_column(Float)
     actual_pts: Mapped[float | None] = mapped_column(Float)
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
-    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
     league: Mapped[League] = relationship()
     team: Mapped[Team] = relationship(foreign_keys=[team_id], back_populates="matchups")
     opponent_team: Mapped[Team | None] = relationship(foreign_keys=[opponent_team_id])
     __table_args__ = (
-        UniqueConstraint("league_id", "week", "team_id", name="uq_matchups_league_week_team"),
+        UniqueConstraint(
+            "league_id", "week", "team_id", name="uq_matchups_league_week_team"
+        ),
         Index("idx_matchups_league_week", "league_id", "week"),
     )
 
@@ -265,11 +378,17 @@ class Projection(Base):
     projected_points: Mapped[float] = mapped_column(Float, nullable=False)
     variance: Mapped[float | None] = mapped_column(Float)
     data: Mapped[dict] = mapped_column(JSON, nullable=False, default=dict)
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
-    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
     player: Mapped[Player] = relationship(back_populates="projections")
     __table_args__ = (
-        UniqueConstraint("player_id", "week", "source", name="uq_projections_player_week_source"),
+        UniqueConstraint(
+            "player_id", "week", "source", name="uq_projections_player_week_source"
+        ),
         Index("idx_projections_week", "week"),
     )
 
@@ -310,7 +429,9 @@ class WaiverCandidate(Base):
     fit_score: Mapped[float | None] = mapped_column(Float)
     faab_suggestion: Mapped[int | None] = mapped_column(Integer)
     acquisition_prob: Mapped[float | None] = mapped_column(Float)
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
     league: Mapped[League] = relationship()
     player: Mapped[Player] = relationship(back_populates="waiver_candidates")
     team: Mapped[Team] = relationship(back_populates="waiver_candidates")
@@ -326,7 +447,10 @@ class StreamerSignal(Base):
     fit_score: Mapped[float | None] = mapped_column(Float)
     weather_bucket: Mapped[int | None] = mapped_column(SmallInteger)
     meta: Mapped[dict] = mapped_column(JSON, nullable=False, default=dict)
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
+
     player_id: Mapped[int | None] = mapped_column(
         Integer,
         ForeignKey("players.id", ondelete="CASCADE"),
@@ -349,7 +473,9 @@ class UserPreferences(Base):
     theme: Mapped[str] = mapped_column(String, nullable=False, default="system")
     saved_views: Mapped[dict] = mapped_column(JSON, nullable=False, default=dict)
     pinned_players: Mapped[list] = mapped_column(JSON, nullable=False, default=list)
-    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
     user: Mapped[User] = relationship(back_populates="preferences")
 
 
@@ -363,7 +489,9 @@ class Note(Base):
         Integer, ForeignKey("players.id", ondelete="CASCADE"), nullable=False
     )
     note: Mapped[str] = mapped_column(String, nullable=False)
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
     user: Mapped[User] = relationship(back_populates="notes")
     player: Mapped[Player] = relationship(back_populates="notes")
     __table_args__ = (Index("idx_notes_user_player", "user_id", "player_id"),)
@@ -385,17 +513,23 @@ class EventLog(Base):
 # ----------------------
 class Job(Base):
     __tablename__ = "jobs"
-    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
     kind: Mapped[str] = mapped_column(String, nullable=False)
     payload: Mapped[dict] = mapped_column(JSON, nullable=False)
     not_before: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     attempts: Mapped[int] = mapped_column(SmallInteger, nullable=False, default=0)
     status: Mapped[str] = mapped_column(String, nullable=False, default="queued")
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
-    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
-    runs: Mapped[list[JobRun]] = relationship(back_populates="job", cascade="all, delete-orphan")
-
-
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
+    runs: Mapped[list[JobRun]] = relationship(
+        back_populates="job", cascade="all, delete-orphan"
+    )
 class JobRun(Base):
     __tablename__ = "job_runs"
     id: Mapped[int] = mapped_column(primary_key=True)

@@ -18,4 +18,6 @@
 16. **[Fixed][Auth]** Default `SESSION_COOKIE_NAME` set to `edge_session` to align with project specification.
 17. **[Fixed][Auth]** `get_current_user` and debug-user dependency now query the database for `User` records rather than returning placeholders.
 18. **[Fixed][Worker]** Celery tasks now accept typed `Session` objects, strengthening static analysis across worker routines.
+19. **[Fixed][API]** Restored analytical models (`Baseline`, `Weather`, `Injury`, `PlayerLink`) with typed columns so worker tests can access them.
+20. **[Fixed][Worker]** Celery tasks import optional models via typed fallbacks, eliminating `mypy` errors when modules are absent.
 
