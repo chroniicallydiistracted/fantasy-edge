@@ -93,8 +93,12 @@ def yahoo_login(request: Request, redis: Redis = Depends(get_redis)):
     )
 
     redirect_url = f"{AUTH_URL}?{params}"
-    # Tests expect a JSON response containing the redirect URL; returning JSON is harmless
-    # for clients that just need the URL. Production browser flows may follow the redirect.
+    # If the client prefers HTML (typical for anchor clicks) or explicitly asks
+    # for a redirect via query param, issue an HTTP redirect. Otherwise, return JSON
+    # containing the URL so SPAs can navigate themselves.
+    accept = (request.headers.get("accept") or "").lower()
+    if "text/html" in accept or request.query_params.get("redirect") == "1":
+        return RedirectResponse(redirect_url, status_code=307)
     return {"redirect": redirect_url}
 
 
