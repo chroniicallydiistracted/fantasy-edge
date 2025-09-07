@@ -8,12 +8,12 @@
 ## Repo & Infra Snapshot (canonical)
 
 - **Frontend (Web):** Next.js 14 app in `apps/web`, deployed on **Vercel**. Production domain: **https://misfits.westfam.media**. Project Root Directory on Vercel = `apps/web`. Uses env **`NEXT_PUBLIC_API_BASE`** for all API calls.
-- **Backend (API):** FastAPI app in `apps/api`, deployed on **Render (Free Web Service)**. Custom production domain: **https://api.misfits.westfam.media**; fallback during setup: **`https://<your-service>.onrender.com`**. Start command: `uvicorn app.main:app --host 0.0.0.0 --port $PORT`. Health: `GET /health`.
+- **Backend (API):** FastAPI app in `apps/api`, deployed on **Render (Free Web Service)**. Custom production domain: **https://api.misfits.westfam.media**; fallback during setup: **`https://REPLACE_ME.onrender.com`**. Start command: `uvicorn app.main:app --host 0.0.0.0 --port $PORT`. Health: `GET /health`.
 - **Database:** **Neon Postgres**. Connect with SQLAlchemy (psycopg v3). **`DATABASE_URL`** format: `postgresql+psycopg://USER:PASSWORD@HOST:5432/DB?sslmode=require`.
 - **Cache / Broker:** **Upstash Redis** (TLS). **`REDIS_URL`** format: `rediss://:PASSWORD@HOST:PORT`.
 - **OAuth Provider:** **Yahoo Fantasy Sports** (scope `fspt-r`). **Redirect URIs registered:**
   - `https://api.misfits.westfam.media/auth/yahoo/callback` (custom domain)
-  - `https://<your-service>.onrender.com/auth/yahoo/callback` (Render fallback)
+  - `https://REPLACE_ME.onrender.com/auth/yahoo/callback` (Render fallback)
   Optional OIDC scopes (`openid profile email`) are fine but not required.
 - **DNS (Cloudflare):**
   - `misfits.westfam.media` → CNAME to Vercel target.
@@ -46,7 +46,7 @@
 ### Live endpoints (once deployed)
 - Web: `https://misfits.westfam.media`
 - API (custom): `https://api.misfits.westfam.media/health`
-- API (fallback): `https://<your-service>.onrender.com/health`
+- API (fallback): `https://REPLACE_ME.onrender.com/health`
 
 ---
 
@@ -103,7 +103,7 @@ Output: minimal code changes and CI files only; no business logic.
 Task: Phase 1 — Auth Foundations.
 Implement SQLAlchemy models + Alembic migrations for user and oauth_token.
 Add token encryption service using cryptography.Fernet with key TOKEN_CRYPTO_KEY=REPLACE_ME (document length/format).
-JWT session cookies: HS256 with SESSION_SECRET=REPLACE_ME. Cookie name: edge_session.
+JWT session cookies: HS256 with JWT_SECRET=REPLACE_ME. Cookie name: edge_session.
 Add dependency to read session or debug header when ALLOW_DEBUG_USER=true.
 Add tests for: encryption, cookie parsing, debug bypass on/off.
 ```
@@ -467,4 +467,3 @@ Author README with precise local dev steps. Provide Postman/Thunder Client colle
 - Monte Carlo win odds engine (simulator service).
 - Caching layer for hot endpoints.
 - Feature flags for UI experiments.
-
